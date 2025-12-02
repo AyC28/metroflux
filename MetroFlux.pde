@@ -1,4 +1,5 @@
 //sigma
+//I am gay
 
 City mainC;
 AbandonedCity subC;
@@ -18,4 +19,3 @@ void draw() {
   subC.display();
   subC.rehabitat(mainC);
 }
-
