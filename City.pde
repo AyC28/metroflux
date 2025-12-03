@@ -4,18 +4,21 @@ class City {
   
   ArrayList<PVector> blocks;
   ArrayList<Integer> surviveTime;
+  ArrayList<PVector> edgeBlocks;
   float blockSize = 4;
-  float maxR = 600;
-  float d;
+  float maxR = 1000;
   
   
   City () {
     blocks = new ArrayList<PVector>();
     surviveTime = new ArrayList<Integer>();
+    edgeBlocks = new ArrayList<PVector>();
   }
   
   void createCity() {
-    blocks.add(new PVector(width/2,height/2));
+    PVector firstBlock = new PVector(width/2,height/2);
+    blocks.add(firstBlock);
+    edgeBlocks.add(firstBlock);
     surviveTime.add(0);
   }
   
@@ -40,9 +43,9 @@ class City {
     
     
     
-    
-    for (int i = 0; i < 200; i++) {    //this controls the rate of growth of city 
-      if (frameCount % 7 ==0) {
+    if (frameCount % 5 ==0) {
+      for (int i = 0; i < 500; i++) {    //this controls the rate of growth of city
+      
         grow();
       }
     }
@@ -55,8 +58,8 @@ class City {
       return;
     }
     
-    int randomStart = int(random(blocks.size()));
-    PVector seed = blocks.get(randomStart);
+    int randomStart = int(random(edgeBlocks.size()));
+    PVector seed = edgeBlocks.get(randomStart);
     
     float startX = seed.x; float startY = seed.y;
     
@@ -74,23 +77,33 @@ class City {
       startY -= blockSize;
     }
     
-    if (!isOccupied(startX,startY) && !subC.isOccupied(startX, startY)) {
-      d = dist(width/2,height/2,startX,startY);
+    if (!isOccupied(startX,startY) && allowBlocks(startX,startY)) {
+      float d = dist(width/2,height/2,startX,startY);
       
-      float prob = 1 - pow((d/maxR),2);
+      float prob = 1- d/10000 ;
       if (random(1) < prob) {
-        blocks.add(new PVector(startX,startY));
+        PVector newBlock = new PVector(startX,startY);
+        blocks.add(newBlock);
+        edgeBlocks.add(newBlock);
         surviveTime.add(0);
       }
     }
+    else {
+      if (checkEdge(seed)) {
+        edgeBlocks.remove(randomStart);
+      }
+    }
+    
   }
   
-  boolean isOccupied(float startX, float startY) {
-    for (PVector b : blocks) {
-      if (b.x == startX && b.y == startY) {
-        return true;
-      }
-        
+  boolean checkEdge(PVector p) {
+    boolean u = isOccupied(p.x, p.y - blockSize);
+    boolean d = isOccupied(p.x, p.y + blockSize);
+    boolean l = isOccupied(p.x - blockSize, p.y);
+    boolean r = isOccupied(p.x + blockSize, p.y);
+    
+    if (u && d && l && r) {
+      return true;
     }
     return false;
   }
