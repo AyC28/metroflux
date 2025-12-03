@@ -1,8 +1,7 @@
-//sigma
-//I am gay
-
 City mainC;
 AbandonedCity subC;
+Mountain mt;
+float terrainScale = 0.01;
 
 void setup() {
   size(1200,800);
@@ -11,6 +10,10 @@ void setup() {
   mainC = new City();
   mainC.createCity();
   subC = new AbandonedCity();
+  
+  mt = new Mountain();
+  mt.generate();
+  mt.display();
 }
 
 void draw() {
