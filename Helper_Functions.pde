@@ -1,10 +1,4 @@
-boolean isOccupied(float x, float y) {
-  float elevation = mt.calculateElevation(x,y);
-  
-  if (elevation > 1.6) {
-    return true;
-  }
-  
+boolean isOccupied(float x, float y) {            //function that checks if its location is already pre-occupied with abandoned city blocks/normal city blocks                                                                                                          
   for (PVector b : mainC.blocks) {
     if (abs(b.x-x) < 1 && abs(b.y-y) < 1) {
       return true;
@@ -20,7 +14,7 @@ boolean isOccupied(float x, float y) {
   return false;
 }
 
-boolean allowBlocks(float x, float y) {
+boolean allowBlocks(float x, float y) {            //Allow the block to show up if it fits in the probability around the mountain
   float elevation = mt.calculateElevation(x,y);
   
   if (elevation <=1.2){
