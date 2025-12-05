@@ -47,7 +47,7 @@ class Mountain {
   float calculateElevation(float x, float y) {
     float d = dist(width/2, height/2, x, y);
     // Map distance so edges are "high" (1) and center is "low" (0)
-    float distFactor = map(d, 0, width/1.5, 0.7, 1);
+    float distFactor = map(d, 0, width/1.5, 0.5, 1);
     
     // Use the global terrainScale variable here
     float n = noise(x * terrainScale, y * terrainScale); 
