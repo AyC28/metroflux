@@ -1,111 +1,129 @@
 class City {
   float popRate;
   int pop;
-
-  ArrayList<PVector> blocks;        //List of blocks existed in the code
-  ArrayList<Integer> surviveTime;   //How long the block has been there, for abandonment
-  ArrayList<PVector> edgeBlocks;    //Blocks that are not surrounded by city
-  float blockSize = 4;              //size of each city block
-  float maxR = 1000;                //Max size of the city (later depends on commute tolerance
-
-
+  
+  ArrayList<PVector> blocks;
+  ArrayList<Integer> surviveTime;
+  ArrayList<PVector> edgeBlocks;
+  float maxR = 1000;
+  
+  
   City () {
     blocks = new ArrayList<PVector>();
     surviveTime = new ArrayList<Integer>();
     edgeBlocks = new ArrayList<PVector>();
   }
-
-  void createCity() {               //Initial 1 block size city
-    PVector firstBlock = new PVector(width/2, height/2);
+  
+  void createCity() {
+    PVector firstBlock = new PVector(width/2,height/2);
     blocks.add(firstBlock);
     edgeBlocks.add(firstBlock);
     surviveTime.add(0);
   }
-
+  
   void updateCity() {
-
-    for (int i = blocks.size()-1; i >= 0; i--) {    //Having a probability to be abandoned becuase of the long survival time / far away from city center
+    
+    for (int i = blocks.size()-1; i >= 0; i--) {
       int time = surviveTime.get(i);
-      surviveTime.set(i, time+1);
-
+      surviveTime.set(i,time+1);
+      
       if (frameCount % 2 ==0) {
         PVector b = blocks.get(i);
         float d = dist(width/2, height/2, b.x, b.y);
         float prob = (d / maxR * 0.00005) + (time * 0.0000001);
-
-        if (random(1) < prob) {                     //Remove the abandoned city block fron its original healthy blocks
+        
+        if(climate.rainLevel > 2) {
+          prob += 0.0025 * climate.rainLevel;
+        }
+        
+        if (random(1) < prob) {
           subC.addRuin(b);
           blocks.remove(i);
           surviveTime.remove(i);
         }
       }
     }
-
-
-    if (frameCount % 5 ==0) {
-      for (int i = 0; i < 500; i++) {    //Rate of growth of city (500 blocks for each update
+    
+    
+    
+    if (frameCount % 7 ==0) {
+      for (int i = 0; i < 200 * climate.getGrowthMultiplier(); i++) {    //this controls the rate of growth of city
+      
         grow();
       }
     }
+    
   }
-
+  
   void grow() {
-
-    if (blocks.size() ==0) {             //If the city is dead, it does not grow
+    
+    if (blocks.size() ==0) {
       return;
     }
-
-    int randomStart = int(random(edgeBlocks.size()));  //random grow starting point (seed)
+    
+    int randomStart = int(random(edgeBlocks.size()));
     PVector seed = edgeBlocks.get(randomStart);
-
-    float startX = seed.x;
-    float startY = seed.y;
-
-    int dir = int(random(4));                          //The block would grow to its neighbors (right, down, left up)
-    if (dir ==0) {
+    
+    float startX = seed.x; float startY = seed.y;
+    
+    int dir = int(random(4));
+    if (dir ==0){
       startX += blockSize;
-    } else if (dir == 1) {
+    }
+    else if (dir == 1) {
       startY += blockSize;
-    } else if (dir == 2) {
+    }
+    else if (dir == 2) {
       startX -= blockSize;
-    } else if (dir == 3) {
+    }
+    else if (dir == 3) {
       startY -= blockSize;
     }
-
-    if (!isOccupied(startX, startY) && allowBlocks(startX, startY)) {  //The new block will grow with a probability if it's location is not occupied by other blocks (mountains, city, water)
-      float d = dist(width/2, height/2, startX, startY);
-
-      float prob = 1- d/10000 ;
+    
+    if (!isOccupied(startX,startY) && allowBlocks(startX,startY)) {
+      float d = dist(width/2,height/2,startX,startY);
+      boolean nearCoast = ocean.isNearCoast(startX,startY,detectRadius);
+      float prob;
+      
+      if (nearCoast) {
+        prob = 0.95;
+      }
+      else{
+        prob = 1- d/1000 ;
+      }
+      
       if (random(1) < prob) {
-        PVector newBlock = new PVector(startX, startY);               //add the new block to existing ArrayList (edgeBlocks, blocks)
+        PVector newBlock = new PVector(startX,startY);
         blocks.add(newBlock);
         edgeBlocks.add(newBlock);
         surviveTime.add(0);
       }
-    } else {
-      if (checkEdge(seed)) {                                         //delete block if the seed (grow-starting point) is surrounded by other city blocks, for optimization
+    }
+    else {
+      if (checkEdge(seed)) {
         edgeBlocks.remove(randomStart);
       }
     }
+    
   }
-
-  boolean checkEdge(PVector p) {                                     //Function that checks if the block is surrounded
+  
+  boolean checkEdge(PVector p) {
     boolean u = isOccupied(p.x, p.y - blockSize);
     boolean d = isOccupied(p.x, p.y + blockSize);
     boolean l = isOccupied(p.x - blockSize, p.y);
     boolean r = isOccupied(p.x + blockSize, p.y);
-
+    
     if (u && d && l && r) {
       return true;
     }
     return false;
   }
-
-  void display() {                                                  //Show all the city blocks
-    fill(255, 200);
-
+  
+  void display() {
+    fill(255,200);
+    
     for (PVector b : blocks) {
-      rect(b.x, b.y, blockSize, blockSize);
+      rect(b.x,b.y,blockSize,blockSize);
     }
   }
 }

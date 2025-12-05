@@ -1,20 +1,23 @@
 class Mountain {
   ArrayList<PVector> rocks;
-  float blockSize = 4;
   
   Mountain() {
     rocks = new ArrayList<PVector>();
   }
   
   void generate() {
+    rocks.clear();
+    
+    
     for (int x = 0; x < width; x+=blockSize) {
       for (int y = 0; y < height; y+=blockSize) {
         
-        float elevation = calculateElevation(x, y);
+        if (ocean.isWater(x,y)) {
+          continue;
+        }
         
-        // If elevation is high enough, a rock exists here
-        // 1.2 is the "Sea level" or "Ground level" cutoff
-        if (elevation > 1.2) { 
+        float elevation = calculateElevation(x, y);
+        if (elevation > 0.6) { 
            rocks.add(new PVector(x, y));
         }
       }
@@ -28,13 +31,13 @@ class Mountain {
       float elevation = calculateElevation(r.x, r.y);
       
       // TOPOGRAPHY COLOR MAPPING
-      if (elevation > 1.6) {
+      if (elevation > 0.85) {
         fill(240, 240, 255); // Snow/White peaks
-      } else if (elevation > 1.45) {
+      } 
+      else if (elevation > 0.7) {
         fill(120, 110, 110); // High Grey Rock
-      } else if (elevation > 1.35) {
-        fill(90, 70, 50);    // Medium Brown Earth
-      } else {
+      }
+      else {
         fill(60, 50, 40);    // Low Dark Foothills
       }
       
@@ -45,20 +48,28 @@ class Mountain {
   // Refactored the math into a single function so generate(), display(), 
   // and isOccupied() all use the exact same math.
   float calculateElevation(float x, float y) {
+    
+    float xOff = 5000; 
+    float yOff = 5000;
+    
+    // Large, smooth noise for the general island shape
+    float n1 = noise((x + xOff) * 0.002, (y + yOff) * 0.002);
+    float n2 = noise((x + xOff) * 0.01, (y + yOff) * 0.01) * 0.2;
+    
+    float baseNoise = n1 + n2; 
+    
+    // Apply the "Anti-Circle" Distance Mask
     float d = dist(width/2, height/2, x, y);
-    // Map distance so edges are "high" (1) and center is "low" (0)
-    float distFactor = map(d, 0, width/1.5, 0.7, 1);
+    float normD = d / (width * 0.6); 
+    float distMask = pow(normD, 3) * 0.6; 
     
-    // Use the global terrainScale variable here
-    float n = noise(x * terrainScale, y * terrainScale); 
+    float baseHeight = baseNoise - distMask; 
+    float mountainMask = map(baseHeight, 0.45, 0.65, 0, 1);
+    mountainMask = constrain(mountainMask, 0, 1);
+    float rockNoise = noise(x * 0.015, y * 0.015); 
+    float finalMountains = rockNoise * mountainMask * hilliness; // 0.8 controls peak height
     
-    return n + distFactor;
+    return baseHeight + finalMountains;
   }
-  
-  boolean isOccupied(float x, float y) {
-    if (calculateElevation(x, y) > 1.2) {
-      return true; 
-    }
-    return false;
-  }
+
 }
