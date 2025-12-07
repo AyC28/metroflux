@@ -4,59 +4,51 @@ Mountain mt;
 Ocean ocean;
 Climate climate;
 
-float terrainScale = 0.01;
-float hilliness = 0.25;
-float oceanScale = 0.002;
 float blockSize = 4;
-float detectRadius = 20; //find coast
+float detectRadius = 20;
 
 void setup() {
-  size(1200,800);
-  background(0,80,0);
+  size(1200, 800);
   noStroke();
-  
+
   ocean = new Ocean();
   mt = new Mountain();
-  
-  climate = new Climate(0, width/2, 100, 160);
-  
-  boolean start = false;
-  
-  while(!start) {
-    long a = int(random(1000000));
-    noiseSeed(a);
-    
-    if (allowBlocks(width/2,height/2)) {
-      start = true;
-    }
-    
-  }
-  
-  
   ocean.generate();
   mt.generate();
-  
+
+  climate = new Climate(0, width/2, 100, 160);
+
+  PVector startBlock = findValidStart();
+
   mainC = new City();
-  mainC.createCity();
+  mainC.climate = climate;
+  mainC.createCity(startBlock);
+
   subC = new AbandonedCity();
-  
 }
 
 void draw() {
-  background(0,80,0);
-  
+  background(0, 80, 0);
+
   ocean.display();
   mt.display();
-  
-  climate.changeWeather(); //have to change this so it will stop raining
-  
+
+  climate.changeWeather();   // manually controlled rain
   climate.update();
   climate.display();
-  
+
   mainC.updateCity();
   mainC.display();
+
   subC.display();
   subC.rehabitat(mainC);
-  
-  climate.displayFlooding();
+}
+
+PVector findValidStart() {
+  PVector p = new PVector(width/2, height/2);
+  while (!allowBlocks(p.x, p.y)) {
+    p.x = width/2 + random(-200, 200);
+    p.y = height/2 + random(-200, 200);
+  }
+  return p;
 }
