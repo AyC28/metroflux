@@ -13,12 +13,18 @@ boolean isOccupied(float x, float y) {
 boolean allowBlocks(float x, float y) {
 
   // Ocean check
-  if (ocean.isWater(x, y)) return false;
+  if (ocean.isWater(x, y)) {
+    return false;
+  }
 
   // Elevation limits
   float elevation = mt.calculateElevation(x, y);
-  if (elevation < 0.45) return false; // water/lowland
-  if (elevation > 0.60) return false; // too steep/rocky
+  if (elevation < 0.45) {
+    return false; // water/lowland
+  }
+  if (elevation > 0.60) {
+    return false; // too steep/rocky
+  }
 
   return true;
 }

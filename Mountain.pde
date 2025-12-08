@@ -31,9 +31,11 @@ class Mountain {
 
       if (elevation > 0.85) {
         fill(240, 240, 255);      // snow peaks
-      } else if (elevation > 0.7) {
+      } 
+      else if (elevation > 0.7) {
         fill(120, 110, 110);      // high rock
-      } else {
+      } 
+      else {
         fill(60, 50, 40);         // foothills
       }
 

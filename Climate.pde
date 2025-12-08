@@ -14,7 +14,7 @@ class Climate {
   }
 
   void changeWeather() {
-    rainLevel = 4;   // manual control
+    rainLevel = 1;   // manual control
     setupRain();
   }
 
@@ -30,7 +30,9 @@ class Climate {
     speed = new float[numDrops];
     len = new float[numDrops];
 
-    for (int i = 0; i < numDrops; i++) resetDrop(i, true);
+    for (int i = 0; i < numDrops; i++) {
+      resetDrop(i, true);
+    }
   }
 
   float getGrowthMultiplier() {
@@ -59,8 +61,9 @@ class Climate {
 
   void drawRain() {
     stroke(200, 200, 255, 150);
-    for (int i = 0; i < numDrops; i++)
+    for (int i = 0; i < numDrops; i++){
       line(x[i], y[i], x[i], y[i] + len[i]);
+    }
     noStroke();
   }
 

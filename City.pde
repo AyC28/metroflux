@@ -54,17 +54,27 @@ class City {
   }
 
   void grow() {
-    if (edgeBlocks.size() == 0) return;
+    if (edgeBlocks.size() == 0) {
+      return;
+    }
 
     PVector seed = edgeBlocks.get(int(random(edgeBlocks.size())));
     float x = seed.x;
     float y = seed.y;
 
     int dir = int(random(4));
-    if (dir == 0) x += blockSize;
-    else if (dir == 1) y += blockSize;
-    else if (dir == 2) x -= blockSize;
-    else y -= blockSize;
+    if (dir == 0) {
+      x += blockSize;
+    }
+    else if (dir == 1) {
+      y += blockSize;
+    }  
+    else if (dir == 2) {
+      x -= blockSize;
+    }
+    else {
+      y -= blockSize;
+    }
 
       if (!isOccupied(x, y) && allowBlocks(x, y)) {
       blocks.add(new PVector(x, y));
@@ -75,7 +85,9 @@ class City {
   }
 
   void generateFlooding() {
-    if (climate == null || climate.rainLevel != 4) return;
+    if (climate == null || climate.rainLevel != 4) {
+      return;
+    }
 
     for (int i = 0; i < flooded.size(); i++) {
       if (!flooded.get(i) && random(1) < 0.001) {  //0.001 or whatever number is there influences the rate of flooded blocks appearing during level 4, might be useful to mark
