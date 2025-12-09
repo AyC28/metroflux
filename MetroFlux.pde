@@ -68,6 +68,7 @@ void draw() {
   fill(255);
   text("Rain Level: " + rainLevel, 20,20);
   text("City Size: " + mainC.blocks.size(), 20,40);
+  text("Abandon Size: " + subC.blocks.size(), 20,60);
   
   if(keyPressed) {
     if (key == '0') {
