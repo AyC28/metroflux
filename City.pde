@@ -6,7 +6,7 @@ class City {
   ArrayList<Integer> floodBlockTimer;
 
   int softLim = 2000;
-  int floodLim = 120;
+  int floodLim = 40;
 
   City() {
     blocks = new ArrayList<PVector>();
@@ -62,7 +62,7 @@ class City {
       }
     }
     
-    if (frameCount % 7 == 0) {
+    if (frameCount % 7 == 0 && blocks.size() > subC.blocks.size()) {
       if (rainLevel >= 3) {
         return;
       }
@@ -79,9 +79,15 @@ class City {
       
       PVector b = blocks.get(i);
       
-      if (floodBlockTimer.get(i) > 10) {
-        float blueC = map(floodBlockTimer.get(i), 0,120, 0,255);
-        fill (0,0,blueC);
+      if (floodBlockTimer.get(i) > 0) {
+        
+        float amt = map(floodBlockTimer.get(i), 0, floodLim, 0, 1);
+
+        
+        color oColor = color(255);
+        color fColor = color(0,100,255);
+        color cLerp = lerpColor(oColor,fColor,amt);
+        fill (cLerp);
       }
       else {
         fill(255);
@@ -96,6 +102,7 @@ class City {
   void abandonBlock(int i, PVector b) {
     subC.addRuin(b);
     blocks.remove(i);
+    floodBlockTimer.remove(i);
     surviveTime.remove(i);
     edgeBlocks.remove(b);
   }
@@ -130,5 +137,21 @@ class City {
       surviveTime.add(0);
       floodBlockTimer.add(0);
     }
+  }
+  
+  float getLowestBuildingElevation() {
+    float minElev = 10.0; // Start high
+    
+    if (blocks.size() == 0) {
+      return 0.45; // Default to sea level if empty
+    }
+
+    for (PVector b : blocks) {
+      float e = getElevation(b.x, b.y);
+      if (e < minElev) {
+        minElev = e;
+      }
+    }
+    return minElev;
   }
 }

@@ -1,5 +1,6 @@
 class Climate {
   int numDrops,maxDrop;
+  float currentWaterLevel = 0.45;
   float[] rX, rY, rSpeed;
   
   Climate() {
@@ -32,6 +33,34 @@ class Climate {
         }
       }
     }
+    
+    float targetLevel = 0.45; 
+    
+    if (rainLevel >= 3) {
+      // 1. Ask City for the lowest surviving house
+      float lowestCityBlock = mainC.getLowestBuildingElevation();
+      
+      // 2. Aim slightly above that house to flood it
+      float floodAggression = 0.02; 
+      float potentialTarget = lowestCityBlock + floodAggression;
+      
+      // 3. Cap the maximum height based on rain intensity
+      // Level 3 stops at 0.49 (Lowlands), Level 4 goes up to 1.0 (Peaks)
+      float maxCap = (rainLevel == 3) ? 0.49 : 1.0;
+      
+      if (potentialTarget > maxCap) {
+        targetLevel = maxCap;
+      } else {
+        targetLevel = potentialTarget;
+      }
+    }
+    
+    if (currentWaterLevel < targetLevel) {
+      currentWaterLevel += 0.0009; // Water Rises
+    } else if (currentWaterLevel > targetLevel) {
+      currentWaterLevel -= 0.001;  // Water Recedes
+    }
+    
   }
   
   void display() {
@@ -54,21 +83,16 @@ class Climate {
 //------------------------------------------------------------------------------------------------------  
 
   boolean isFlooding(float x, float y) {
-    if (rainLevel < 3) {
-      return false;
-    }
+    // If water is at sea level, no flooding
+    if (currentWaterLevel <= 0.45) return false;
     
-    float elev = getElevation(x,y);
+    float elev = getElevation(x, y);
     
-    if(rainLevel == 3) {
-      if (elev >= 0.45 && elev <= 0.48) {
-        return true;
-      }
-    }
-    else if (rainLevel == 4) {
-      if (elev >=0.45 && elev <0.52) {
-        return true;
-      }
+    // A block floods if:
+    // 1. It is land (> 0.45)
+    // 2. It is lower than the current rising water level
+    if (elev >= 0.45 && elev < currentWaterLevel) {
+      return true;
     }
     
     return false;
