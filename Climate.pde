@@ -1,74 +1,77 @@
 class Climate {
-
-  int rainLevel;
-  int numDrops;
-  float[] x, y, speed, len;
-  float cloudX, cloudY, cloudSize;
-
-  Climate(int level, float cx, float cy, float cs) {
-    rainLevel = level;
-    cloudX = cx;
-    cloudY = cy;
-    cloudSize = cs;
-    setupRain();
+  int numDrops,maxDrop;
+  float[] rX, rY, rSpeed;
+  
+  Climate() {
+    maxDrop = maxRainLevel * 200;
+    
+    rX = new float[maxDrop];
+    rY = new float[maxDrop];
+    rSpeed = new float[maxDrop];
+    
+    for (int i = 0; i < maxDrop; i++) {
+      rX[i] = random(width);
+      rY[i] = random(height);
+      rSpeed[i] = random(10,rainLevel*5);
+    }
   }
-
-  void changeWeather() {
-    rainLevel = 1;   // manual control
-    setupRain();
-  }
-
-  void setupRain() {
+  
+  void update() {
     if (rainLevel == 0) {
       numDrops = 0;
+    }
+    else {
+      
+      numDrops = rainLevel * 200;
+      
+      for (int i=0; i < numDrops; i++) {
+        rY[i] += rSpeed[i];
+        if (rY[i] > height) {
+          rY[i] = -10;
+          rX[i] = random(width);
+        }
+      }
+    }
+  }
+  
+  void display() {
+    if (rainLevel == 0) {
       return;
     }
-
-    numDrops = rainLevel * 50;
-    x = new float[numDrops];
-    y = new float[numDrops];
-    speed = new float[numDrops];
-    len = new float[numDrops];
-
-    for (int i = 0; i < numDrops; i++) {
-      resetDrop(i, true);
-    }
-  }
-
-  float getGrowthMultiplier() {
-    return map(rainLevel, 0, 4, 1, 0.25);
-  }
-
-  void update() {
-    for (int i = 0; i < numDrops; i++) {
-      y[i] += speed[i];
-      if (y[i] > height) resetDrop(i, false);
-    }
-  }
-
-  void display() {
-    if (numDrops == 0) return;
-    drawCloud();
-    drawRain();
-  }
-
-  void resetDrop(int i, boolean rand) {
-    x[i] = cloudX + random(-cloudSize*0.5, cloudSize*0.5);
-    y[i] = rand ? random(cloudY, height) : cloudY;
-    speed[i] = random(4, 10);
-    len[i] = random(10, 25);
-  }
-
-  void drawRain() {
-    stroke(200, 200, 255, 150);
-    for (int i = 0; i < numDrops; i++){
-      line(x[i], y[i], x[i], y[i] + len[i]);
+    
+    stroke(200,200,255,150);
+    
+    for (int i=0; i< numDrops; i++) {
+      line(rX[i], rY[i], rX[i], rY[i] + rSpeed[i]*4);
     }
     noStroke();
+    
+    fill(0,0,50,rainLevel * 30);
+    rect(0,0,width,height);
+    
   }
+  
+//------------------------------------------------------------------------------------------------------  
 
-  void drawCloud() {
-    fill(240);
-    ellipse(cloudX, cloudY, cloudSize, cloudSize * 0.6);
+  boolean isFlooding(float x, float y) {
+    if (rainLevel < 3) {
+      return false;
+    }
+    
+    float elev = getElevation(x,y);
+    
+    if(rainLevel == 3) {
+      if (elev >= 0.45 && elev <= 0.48) {
+        return true;
+      }
+    }
+    else if (rainLevel == 4) {
+      if (elev >=0.45 && elev <0.52) {
+        return true;
+      }
+    }
+    
+    return false;
   }
+  
 }

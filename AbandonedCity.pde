@@ -1,7 +1,5 @@
 class AbandonedCity extends City {
 
-  float luckyNum;
-
   AbandonedCity() {
     super();
   }
@@ -11,34 +9,27 @@ class AbandonedCity extends City {
   }
 
   void display() {
-    fill(50, 20, 20);
+    fill(0);
     for (PVector b : blocks){
       rect(b.x, b.y, blockSize, blockSize);
     }
   }
 
   void rehabitat(City target) {
-    if (blocks.size() == 0) {
+    if (blocks.size() == 0 || rainLevel >= 3) {
       return;
     }
 
-    if (blocks.size() < 100) {
-      luckyNum = 0.1 * pow(millis(), -0.0001);
-    }
-    else if (blocks.size() < 300){
-       luckyNum = 0.8;
-    }
-    else {
-      luckyNum = 1;
-    }
 
-    if (random(1) < luckyNum) {
+    if (random(1) < 0.05) {
       int i = int(random(blocks.size()));
       PVector b = blocks.get(i);
+      
       target.blocks.add(b);
       target.surviveTime.add(0);
       target.edgeBlocks.add(b);
-      target.flooded.add(false);
+      target.floodBlockTimer.add(0);
+      
       blocks.remove(i);
     }
   }

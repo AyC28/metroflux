@@ -3,55 +3,103 @@ class City {
   ArrayList<PVector> blocks;
   ArrayList<Integer> surviveTime;
   ArrayList<PVector> edgeBlocks;
-  ArrayList<Boolean> flooded;
+  ArrayList<Integer> floodBlockTimer;
 
-  Climate climate;
-  float maxR = 1000;
+  int softLim = 2000;
+  int floodLim = 120;
 
   City() {
     blocks = new ArrayList<PVector>();
     surviveTime = new ArrayList<Integer>();
     edgeBlocks = new ArrayList<PVector>();
-    flooded = new ArrayList<Boolean>();
-    climate = null;
+    floodBlockTimer = new ArrayList<Integer>();
   }
 
-  void createCity(PVector start) {
-    blocks.add(start);
-    edgeBlocks.add(start);
+  void createCity(PVector startB) {
+    blocks.add(startB);
+    edgeBlocks.add(startB);
     surviveTime.add(0);
-    flooded.add(false);
+    floodBlockTimer.add(0);
   }
 
   void updateCity() {
-
+    
+    float decayProb = 0.0001;
+    
+    if (blocks.size() > softLim) {
+      float overB = blocks.size() - softLim;
+      decayProb += (overB * 0.0003);
+    }
+    
     for (int i = blocks.size()-1; i >= 0; i--) {
       int t = surviveTime.get(i);
       surviveTime.set(i, t+1);
-
-      if (frameCount % 2 == 0) {
-        PVector b = blocks.get(i);
-        float d = dist(width/2, height/2, b.x, b.y);
-        float prob = (d / maxR * 0.00005) + (t * 0.0000001);
-
+      PVector b = blocks.get(i);
+      
+      boolean floodedBlock = climate.isFlooding(b.x,b.y);
+      
+      if (floodedBlock) {
+        int fT = floodBlockTimer.get(i);
+        floodBlockTimer.set(i,fT +1);
+        
+        if (fT > floodLim) {
+          abandonBlock(i,b);
+          continue;
+        }
+      }
+      else {
+        if (floodBlockTimer.get(i) > 0) {
+          floodBlockTimer.set(i, floodBlockTimer.get(i) -1);
+        }
+      }
+      
+      
+      if (frameCount % 5 == 0) {
+        float prob = decayProb + (t*0.000001);
         if (random(1) < prob) {
-          subC.addRuin(b);
-          blocks.remove(i);
-          surviveTime.remove(i);
-          edgeBlocks.remove(b);
-          flooded.remove(i);
+          abandonBlock(i,b);
         }
       }
     }
-
+    
     if (frameCount % 7 == 0) {
-      int baseAttempts = 300;  //Controls the rate of the city expanding, important for slider probably
-      int attempts = int(baseAttempts * climate.getGrowthMultiplier());
-      for (int i = 0; i < attempts; i++) grow();
+      if (rainLevel >= 3) {
+        return;
+      }
+      
+      for (int i = 0; i < 200; i++) {
+        grow();
+      }
     }
-
-    generateFlooding();
+    
   }
+
+  void display() {
+    for (int i = 0; i < blocks.size(); i++) {
+      
+      PVector b = blocks.get(i);
+      
+      if (floodBlockTimer.get(i) > 10) {
+        float blueC = map(floodBlockTimer.get(i), 0,120, 0,255);
+        fill (0,0,blueC);
+      }
+      else {
+        fill(255);
+      }
+      
+      rect(b.x,b.y,blockSize,blockSize);
+    }
+  }
+
+//------------------------------------------------------------------------------------------------------
+
+  void abandonBlock(int i, PVector b) {
+    subC.addRuin(b);
+    blocks.remove(i);
+    surviveTime.remove(i);
+    edgeBlocks.remove(b);
+  }
+
 
   void grow() {
     if (edgeBlocks.size() == 0) {
@@ -80,31 +128,7 @@ class City {
       blocks.add(new PVector(x, y));
       edgeBlocks.add(new PVector(x, y));
       surviveTime.add(0);
-      flooded.add(false);
-    }
-  }
-
-  void generateFlooding() {
-    if (climate == null || climate.rainLevel != 4) {
-      return;
-    }
-
-    for (int i = 0; i < flooded.size(); i++) {
-      if (!flooded.get(i) && random(1) < 0.001) {  //0.001 or whatever number is there influences the rate of flooded blocks appearing during level 4, might be useful to mark
-        flooded.set(i, true);
-      }
-    }
-  }
-
-  void display() {
-    for (int i = 0; i < blocks.size(); i++) {
-      if (climate != null && climate.rainLevel == 4 && flooded.get(i)) {
-        fill(0, 100, 255, 180);
-      } else {
-        fill(255, 200);
-      }
-      PVector b = blocks.get(i);
-      rect(b.x, b.y, blockSize, blockSize);
+      floodBlockTimer.add(0);
     }
   }
 }
