@@ -1,33 +1,95 @@
-boolean isOccupied(float x, float y) {            //function that checks if its location is already pre-occupied with abandoned city blocks/normal city blocks                                                                                                          
-  for (PVector b : mainC.blocks) {
-    if (abs(b.x-x) < 1 && abs(b.y-y) < 1) {
-      return true;
-    }
+PVector findValidStart() {
+  PVector p = new PVector(width/2, height/2);
+  while (!allowBlocks(p.x, p.y)) {
+    p.x = width/2 + random(-300, 300);
+    p.y = height/2 + random(-300, 300);
   }
+  return p;
+}
+
+//------------------------------------------------------------------------------------------------------
+
+boolean allowBlocks(float x, float y) {    //allow blocks to spawn if its not too high up mountain and not ocean
   
-  for (PVector b : subC.blocks) {
-    if (abs(b.x-x) < 1 && abs(b.y-y) < 1) {
-      return true;
-    }
+  float elev = getElevation(x,y);
+  
+  if (enableOcean && elev < 0.45) {
+    return false;
   }
-  
+
+  if (enableMountain && 0.6 >= elev && elev > 0.45) {
+    return true;
+  }
+
+  if (enableMountain && 0.7 >= elev && elev > 0.6 && random(1) < 0.1) {
+    return true;
+  }
+  else if (enableMountain && 0.85 >= elev && elev > 0.7 && random(1) < 0.01) {
+    return true;
+  }
+  else if (enableMountain && elev >= 0.85 && random(1) < 0.0004) {
+    return true;
+  }
+
   return false;
 }
 
-boolean allowBlocks(float x, float y) {            //Allow the block to show up if it fits in the probability around the mountain
-  float elevation = mt.calculateElevation(x,y);
+//------------------------------------------------------------------------------------------------------
+
+float getElevation(float x, float y) {        //Perlin noise for generation ocean & mountain
+  float xOff = 5000; 
+  float yOff = 5000;
+
+  // 1. Base Landscape (Continental shape)
+  float n1 = noise((x + xOff) * 0.002, (y + yOff) * 0.002);
+  float n2 = noise((x + xOff) * 0.01, (y + yOff) * 0.01) * 0.2;
+  float baseHeight = n1 + n2;
+
+  // 2. Island Mask (Makes the edges lower than the center)
+  float d = dist(width/2, height/2, x, y);
+  float normD = d / (width * 0.6);
+  float islandMask = pow(normD, 3) * 0.6;
   
-  if (elevation <=1.2){
-    return true;
+  // If Ocean is disabled, we flatten the mask so it's an infinite plain
+  // But we keep a tiny bit of mask to create a "basin" for flood logic if needed
+  if (!enableOcean) {
+    islandMask = 0; 
   }
-  else if (elevation <=1.35 && random(1) < 0.01) {
-    return true;
+  
+  // 3. Apply Ocean Severity to base height
+  // Higher oceanSeverity = lower ground = more water
+  float oceanMod = map(oceanSeverity, 0, 10, 0.1, -0.1); 
+  
+  float elevation = (baseHeight - islandMask) + oceanMod;
+
+  // 4. Mountain Details
+  if (enableMountain) {
+    // Determine where mountains go (only on higher ground)
+    float mountainZone = constrain(map(elevation, 0.45, 0.65, 0, 1), 0, 1);
+    float ruggedness = noise(x * 0.015, y * 0.015);
+    
+    // Scale height by severity
+    float peakHeight = map(mtSeverity, 0, 10, 0.1, 0.6);
+    
+    elevation += ruggedness * mountainZone * peakHeight;
   }
-  else if (elevation <=1.45 && random(1) < 0.001) {
-    return true;
-  }
-  else if (elevation <= 1.6 && random(1) < 0.0004) {
-    return true;
-  }
-  return false;
+
+  return elevation;
+}
+
+//------------------------------------------------------------------------------------------------------
+
+float calEconGrow(float gdp, float recession, float budget, float popGrow) {
+  float baseStab = gdp / 50000;
+  float risk = 1.0 - recession;
+  float richFactor = log(budget + 1) / 10;
+  
+  return constrain( (baseStab * risk * richFactor) + popGrow, 0, 5);
+}
+
+float calUrbanSize ( float commute, float econFactor) {
+  float maxArea = PI * pow(commute,2);
+  float effectiveArea = maxArea * econFactor;
+  
+  return int(effectiveArea/ pow (blockSize,2));
 }

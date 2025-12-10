@@ -1,111 +1,177 @@
 class City {
-  float popRate;
-  int pop;
 
-  ArrayList<PVector> blocks;        //List of blocks existed in the code
-  ArrayList<Integer> surviveTime;   //How long the block has been there, for abandonment
-  ArrayList<PVector> edgeBlocks;    //Blocks that are not surrounded by city
-  float blockSize = 4;              //size of each city block
-  float maxR = 1000;                //Max size of the city (later depends on commute tolerance
+  ArrayList<PVector> blocks;
+  ArrayList<Integer> surviveTime;
+  ArrayList<PVector> edgeBlocks;
+  ArrayList<Integer> floodBlockTimer;
 
+  int softLim = 2000;      //Once there are 2000 city blocks, it will start to decrease its growth rate
+  int floodLim = 40;       //It takes 40 frames to flood one city block
 
-  City () {
+  City() {
     blocks = new ArrayList<PVector>();
     surviveTime = new ArrayList<Integer>();
     edgeBlocks = new ArrayList<PVector>();
+    floodBlockTimer = new ArrayList<Integer>();
   }
 
-  void createCity() {               //Initial 1 block size city
-    PVector firstBlock = new PVector(width/2, height/2);
-    blocks.add(firstBlock);
-    edgeBlocks.add(firstBlock);
+  void createCity(PVector startB) {  //Initiate city, somewhere green
+    blocks.add(startB);
+    edgeBlocks.add(startB);          //Use edge blocks so the function doesn't need to loop through all the blocks
     surviveTime.add(0);
+    floodBlockTimer.add(0);          //A flood timer for all blocks
   }
 
   void updateCity() {
-
-    for (int i = blocks.size()-1; i >= 0; i--) {    //Having a probability to be abandoned becuase of the long survival time / far away from city center
-      int time = surviveTime.get(i);
-      surviveTime.set(i, time+1);
-
-      if (frameCount % 2 ==0) {
-        PVector b = blocks.get(i);
-        float d = dist(width/2, height/2, b.x, b.y);
-        float prob = (d / maxR * 0.00005) + (time * 0.0000001);
-
-        if (random(1) < prob) {                     //Remove the abandoned city block fron its original healthy blocks
-          subC.addRuin(b);
-          blocks.remove(i);
-          surviveTime.remove(i);
+    
+    float decayProb = 0.0001;        //probability that this block will abandoned.
+    
+    if (blocks.size() > softLim) {
+      float overB = blocks.size() - softLim;  //Increase the chance of abandonment when over the soft limit
+      decayProb += (overB * 0.000003);
+    }
+    
+    for (int i = blocks.size()-1; i >= 0; i--) {
+      int t = surviveTime.get(i);            //update the time blocks exist on the screen
+      surviveTime.set(i, t+1);
+      PVector b = blocks.get(i);
+      
+      boolean floodedBlock = climate.isFlooding(b.x,b.y);
+      
+      if (floodedBlock) {                    //For the blocks that are flooded, they will have 40 frames countdown, indicated by the color
+        int fT = floodBlockTimer.get(i);
+        floodBlockTimer.set(i,fT +1);
+        
+        if (fT > floodLim) {
+          abandonBlock(i,b);                 //The block will be abandoned if it exist flood limit time
+          continue;
+        }
+      }
+      else {
+        if (floodBlockTimer.get(i) > 0) {    //Decrease flood intensity slowly at anytime if the block is slightly flooded.
+          floodBlockTimer.set(i, floodBlockTimer.get(i) -1);
+        }
+      }
+      
+      
+      if (frameCount % 5 == 0) {            //Pick a random block to abandon every 5 frame if probability fits.
+        float prob = decayProb + (t*0.000001);
+        if (random(1) < prob) {
+          abandonBlock(i,b);
         }
       }
     }
-
-
-    if (frameCount % 5 ==0) {
-      for (int i = 0; i < 500; i++) {    //Rate of growth of city (500 blocks for each update
+    
+    if (frameCount % 7 == 0 && blocks.size() > subC.blocks.size()) {
+      if (rainLevel >= 3) {                //Will not grow if over rain level 3
+        return;
+      }
+      
+      for (int i = 0; i < 200; i++) {      //200 edge blocks will be given a chance to expand
         grow();
       }
     }
+    
   }
 
-  void grow() {
+  void display() {
+    for (int i = 0; i < blocks.size(); i++) {
+      
+      PVector b = blocks.get(i);
+      
+      if (floodBlockTimer.get(i) > 0) {
+        
+        float floodTime = map(floodBlockTimer.get(i), 0, floodLim, 0, 1);
 
-    if (blocks.size() ==0) {             //If the city is dead, it does not grow
+        
+        color oColor = color(255);
+        color fColor = color(0,100,255);
+        color cLerp = lerpColor(oColor,fColor,floodTime);        //Normal block will be white, and if flooded will be lerped to a shade of blue
+        fill (cLerp);
+      }
+      else {
+        fill(255);
+      }
+      
+      rect(b.x,b.y,blockSize,blockSize);        
+    }
+  }
+
+//------------------------------------------------------------------------------------------------------
+
+  void abandonBlock(int i, PVector b) {    //Function to make an abandon city block
+    subC.addRuin(b);
+    blocks.remove(i);
+    floodBlockTimer.remove(i);
+    surviveTime.remove(i);
+    edgeBlocks.remove(b);
+  }
+
+
+  void grow() {
+    if (edgeBlocks.size() == 0) {
       return;
     }
 
-    int randomStart = int(random(edgeBlocks.size()));  //random grow starting point (seed)
-    PVector seed = edgeBlocks.get(randomStart);
+    PVector seed = edgeBlocks.get(int(random(edgeBlocks.size())));  //picking a random edgeBlock to start expanding
+    float x = seed.x;
+    float y = seed.y;
 
-    float startX = seed.x;
-    float startY = seed.y;
-
-    int dir = int(random(4));                          //The block would grow to its neighbors (right, down, left up)
-    if (dir ==0) {
-      startX += blockSize;
-    } else if (dir == 1) {
-      startY += blockSize;
-    } else if (dir == 2) {
-      startX -= blockSize;
-    } else if (dir == 3) {
-      startY -= blockSize;
+    int dir = int(random(4));      //random direction to expand
+    if (dir == 0) {
+      x += blockSize;
+    }
+    else if (dir == 1) {
+      y += blockSize;
+    }  
+    else if (dir == 2) {
+      x -= blockSize;
+    }
+    else {
+      y -= blockSize;
     }
 
-    if (!isOccupied(startX, startY) && allowBlocks(startX, startY)) {  //The new block will grow with a probability if it's location is not occupied by other blocks (mountains, city, water)
-      float d = dist(width/2, height/2, startX, startY);
-
-      float prob = 1- d/10000 ;
-      if (random(1) < prob) {
-        PVector newBlock = new PVector(startX, startY);               //add the new block to existing ArrayList (edgeBlocks, blocks)
-        blocks.add(newBlock);
-        edgeBlocks.add(newBlock);
-        surviveTime.add(0);
-      }
-    } else {
-      if (checkEdge(seed)) {                                         //delete block if the seed (grow-starting point) is surrounded by other city blocks, for optimization
-        edgeBlocks.remove(randomStart);
-      }
+      if (!isOccupied(x, y) && allowBlocks(x, y)) {    //BUT if the new direction is blocked either by mountain, ocean, or city blocks, it will not generate
+      blocks.add(new PVector(x, y));
+      edgeBlocks.add(new PVector(x, y));
+      surviveTime.add(0);
+      floodBlockTimer.add(0);        //new values for this city block
     }
   }
-
-  boolean checkEdge(PVector p) {                                     //Function that checks if the block is surrounded
-    boolean u = isOccupied(p.x, p.y - blockSize);
-    boolean d = isOccupied(p.x, p.y + blockSize);
-    boolean l = isOccupied(p.x - blockSize, p.y);
-    boolean r = isOccupied(p.x + blockSize, p.y);
-
-    if (u && d && l && r) {
-      return true;
+  
+  //checks which block is the lowest, and we can start flooding from there 
+  float getLowestBuildingElevation() {
+    float minElev = 10.0; // Start high
+    
+    if (blocks.size() == 0) {
+      return 0.45;        // set to 0.45 when no blocks left
     }
-    return false;
-  }
-
-  void display() {                                                  //Show all the city blocks
-    fill(255, 200);
 
     for (PVector b : blocks) {
-      rect(b.x, b.y, blockSize, blockSize);
+      float e = getElevation(b.x, b.y);
+      if (e < minElev) {
+        minElev = e;
+      }
     }
+    return minElev;
+  }
+  
+//------------------------------------------------------------------------------------------------------
+  
+  boolean isOccupied(float x, float y) {   //check if new block is already taken
+
+    for (PVector b : mainC.blocks) {
+      if (abs(b.x - x) < 1 && abs(b.y - y) < 1) {
+        return true;
+      }
+    }
+  
+    for (PVector b : subC.blocks) {
+      if (abs(b.x - x) < 1 && abs(b.y - y) < 1) {
+        return true;
+      }
+    }
+  
+    return false;
   }
 }
