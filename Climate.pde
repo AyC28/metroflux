@@ -15,7 +15,7 @@ class Climate {
     for (int i = 0; i < maxDrop; i++) {
       rX[i] = random(width);
       rY[i] = random(height);
-      rSpeed[i] = random(10,rainLevel*5);
+      rSpeed[i] = random(10,(rainLevel+2.2)*5);
     }
   }
   

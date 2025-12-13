@@ -18,43 +18,64 @@ public void setMap(GButton source, GEvent event) { //_CODE_:genMap:451647:
   applySetting(tempVar);
   generateSeed();
   setnewMap();
-  
-  println("button1 - GButton >> GEvent." + event + " @ " + millis());
+  syncGUI();
 } //_CODE_:genMap:451647:
 
 public void oEcon(GButton source, GEvent event) { //_CODE_:openEcon:987711:
   economicsSet.setVisible(true);
-
-  println("button2 - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:openEcon:987711:
 
 public void oEnv(GButton source, GEvent event) { //_CODE_:openEnv:591581:
   environmentSet.setVisible(true);
-  
-  println("button3 - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:openEnv:591581:
 
 public void setJ(GButton source, GEvent event) { //_CODE_:presetJ:376584:
-  println("button4 - GButton >> GEvent." + event + " @ " + millis());
+  tempVar[0] = 0.1;
+  tempVar[1] = 1;
+  tempVar[2] = 0.5;
+  tempVar[3] = 1;
+  tempVar[4] = 0.3;
+  
+  syncGUI();
+  applySetting(tempVar);
+  noiseSeed(653087);
+  setnewMap();
 } //_CODE_:presetJ:376584:
 
 public void setM(GButton source, GEvent event) { //_CODE_:presetM:203186:
-  println("button5 - GButton >> GEvent." + event + " @ " + millis());
+  tempVar[0] = 0.1;
+  tempVar[1] = 0;
+  tempVar[2] = 0.5;
+  tempVar[3] = 1;
+  tempVar[4] = 1;
+  
+  syncGUI();
+  applySetting(tempVar);
+  noiseSeed(222464);
+  setnewMap();
 } //_CODE_:presetM:203186:
 
 public void setO(GButton source, GEvent event) { //_CODE_:presetO:755041:
-  println("button6 - GButton >> GEvent." + event + " @ " + millis());
+  tempVar[0] = 0.1;
+  tempVar[1] = 1;
+  tempVar[2] = 1;
+  tempVar[3] = 0;
+  tempVar[4] = 0.12;
+  
+  
+  applySetting(tempVar);
+  syncGUI();
+  noiseSeed(169654);
+  setnewMap();
 } //_CODE_:presetO:755041:
 
 public void resetSetting(GButton source, GEvent event) { //_CODE_:resetMap:404340:
   startTempVars();
+  syncGUI();
   resetMap();
-  
-  println("resetMap - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:resetMap:404340:
 
 synchronized public void draw_envrio(PApplet appc, GWinData data) { //_CODE_:environmentSet:589896:
- 
   appc.background(175, 225, 175);
 } //_CODE_:environmentSet:589896:
 
@@ -66,8 +87,6 @@ public void toggleOcean(GCheckbox source, GEvent event) { //_CODE_:oceanCheck:41
   else {
     tempVar[1] = 1;
   }
-  
-  println("oceanCheck - GCheckbox >> GEvent." + event + " @ " + millis());
 } //_CODE_:oceanCheck:417087:
 
 public void toggleMountain(GCheckbox source, GEvent event) { //_CODE_:mountainCheck:680878:
@@ -78,79 +97,54 @@ public void toggleMountain(GCheckbox source, GEvent event) { //_CODE_:mountainCh
   else {
     tempVar[3] = 1;
   }
-  
-  println("mountainCheck - GCheckbox >> GEvent." + event + " @ " + millis());
 } //_CODE_:mountainCheck:680878:
 
 public void sliderOcean(GCustomSlider source, GEvent event) { //_CODE_:setOcean:783830:
   tempVar[2] = setOcean.getValueF();
-  
-  println("setOcean - GCustomSlider >> GEvent." + event + " @ " + millis());
 } //_CODE_:setOcean:783830:
 
 public void sliderMountain(GCustomSlider source, GEvent event) { //_CODE_:setMountain:234560:
   tempVar[4] = setMountain.getValueF();
-  
-  println("setMountain - GCustomSlider >> GEvent." + event + " @ " + millis());
 } //_CODE_:setMountain:234560:
 
 public void sliderRain(GCustomSlider source, GEvent event) { //_CODE_:setRain:860061:
   tempVar[0] = setRain.getValueF();
-  
-  println("setRain - GCustomSlider >> GEvent." + event + " @ " + millis());
 } //_CODE_:setRain:860061:
 
 public void cEn(GButton source, GEvent event) { //_CODE_:closeEnviro:633859:
   environmentSet.setVisible(false);
-  
-  println("closeEnviro - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:closeEnviro:633859:
 
 synchronized public void draw_econ(PApplet appc, GWinData data) { //_CODE_:economicsSet:983638:
-  
-  
   appc.background(152, 216, 219);
 } //_CODE_:economicsSet:983638:
 
 public void sliderGDP(GCustomSlider source, GEvent event) { //_CODE_:setGDP:722549:
-  tempVar[5] = float(setGDP.getValueI());
-  
-  println("setGDP - GCustomSlider >> GEvent." + event + " @ " + millis());
+  gdpPerCapita = setGDP.getValueI();
 } //_CODE_:setGDP:722549:
 
 public void sliderMuni(GCustomSlider source, GEvent event) { //_CODE_:setMuni:650462:
-  tempVar[6] = float(setMuni.getValueI());
-  
-  println("setMuni - GCustomSlider >> GEvent." + event + " @ " + millis());
+  municipalBudget = setMuni.getValueI();
 } //_CODE_:setMuni:650462:
 
 public void sliderComm(GCustomSlider source, GEvent event) { //_CODE_:setComm:829493:
-  tempVar[9] = float(setComm.getValueI());
-  
-  println("setComm - GCustomSlider >> GEvent." + event + " @ " + millis());
+  commuteTolerances = setComm.getValueI();
 } //_CODE_:setComm:829493:
 
 public void sliderPopG(GCustomSlider source, GEvent event) { //_CODE_:setPopG:362966:
-  tempVar[8] = setPopG.getValueF();
-  
-  println("setPopG - GCustomSlider >> GEvent." + event + " @ " + millis());
+  populationGrowthRate = setPopG.getValueF();
 } //_CODE_:setPopG:362966:
 
 public void sliderPopDen(GCustomSlider source, GEvent event) { //_CODE_:setPopDen:748355:
-  tempVar[10] = setPopDen.getValueF();
-  
-  println("setPopDen - GCustomSlider >> GEvent." + event + " @ " + millis());
+  populationDensity = setPopDen.getValueI();
 } //_CODE_:setPopDen:748355:
 
 public void sliderEconR(GCustomSlider source, GEvent event) { //_CODE_:setEconR:757411:
-  tempVar[7] = setEconR.getValueF();
-  
-  println("setEconR - GCustomSlider >> GEvent." + event + " @ " + millis());
+  economicRecessionRate = setEconR.getValueF();
 } //_CODE_:setEconR:757411:
 
 public void cEcon(GButton source, GEvent event) { //_CODE_:closeEconomics:835496:
   economicsSet.setVisible(false);
-  println("closeEconomics - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:closeEconomics:835496:
 
 
@@ -219,7 +213,7 @@ public void createGUI(){
   setMountain = new GCustomSlider(environmentSet, 235, 82, 130, 54, "grey_blue");
   setMountain.setShowValue(true);
   setMountain.setShowLimits(true);
-  setMountain.setLimits(0.5, 0.0, 1.0);
+  setMountain.setLimits(0.3, 0.0, 1.0);
   setMountain.setNbrTicks(5);
   setMountain.setShowTicks(true);
   setMountain.setNumberFormat(G4P.DECIMAL, 2);

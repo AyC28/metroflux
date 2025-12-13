@@ -5,16 +5,13 @@ PVector findValidStart() {
     p.x = width/2 + random(-300, 300);
     p.y = height/2 + random(-300, 300);
     attempts++;
-    if (attempts > 200) {
+    if (attempts > 500) {
       println("try with new map");
       generateSeed();
       ocean.generate();
       mt.generate();
       attempts = 0;
-      
     }
-    
-    
   }
   return p;
 }
@@ -81,7 +78,7 @@ float getElevation(float x, float y) {        //Perlin noise for generation ocea
   // 4. Mountain Details
   if (enableMountain) {
     // Determine where mountains go (only on higher ground)
-    float mtThreshold = map(mtSeverity, 0.0, 1.0, 0.70, 0.50);
+    float mtThreshold = map(mtSeverity, 0, 1, 0.7, 0.55);
     float mountainZone = constrain(map(elevation, 0.45, mtThreshold, 0, 1), 0, 1);
     float ruggedness = noise(x * 0.015, y * 0.015);
     
@@ -138,7 +135,7 @@ int calUrbanSize (float commute, float econFactor, float density) {
 
 void calEcon() {
   float econFactor = calEconGrow(gdpPerCapita, economicRecessionRate, municipalBudget, populationGrowthRate);
-  int targetSize = calUrbanSize(commuteTolerances, econFactor, populationDesity);
+  int targetSize = calUrbanSize(commuteTolerances, econFactor, populationDensity);
   
   mainC.growthMultiplier = econFactor;
   mainC.softLim = targetSize;
@@ -147,69 +144,6 @@ void calEcon() {
 
 
 //------------------------------------------------------------------------------------------------------
-
-void applySetting(float[] TempVar) {
-  
-  rainFreq = tempVar[0];
-  if (tempVar[1] == 0) {
-    enableOcean = false;
-  }
-  else {
-    enableOcean = true;
-  }
-  oceanSeverity = TempVar[2];
-  if (tempVar[3] == 0) {
-    enableMountain = false;
-  }
-  else {
-    enableMountain = true;
-  }
-  mtSeverity = tempVar[4];
-  gdpPerCapita = int(tempVar[5]);
-  municipalBudget = int(tempVar[6]);
-  economicRecessionRate = tempVar[7];
-  populationGrowthRate = tempVar[8];
-  commuteTolerances = int(tempVar[9]);
-  populationDesity = int(tempVar[10]);
-}
-
-void startTempVars() {
-  tempVar[0] = 0.1;
-  tempVar[1] = 1;
-  tempVar[2] = 0.5;
-  tempVar[3] = 1;
-  tempVar[4] = 0.3;
-  
-  tempVar[5] = 50000;
-  tempVar[6] = 50000;
-  tempVar[7] = 0.1;
-  tempVar[8] = 0.05;
-  tempVar[9] = 150;
-  tempVar[10] = 10;
-}
-
-void setnewMap() {
-  generateSeed();
-  ocean.generate();
-  mt.generate();
-  climate = new Climate();
-  startBlock = findValidStart();
-  mainC = new City();
-  mainC.createCity(startBlock);
-  subC = new AbandonedCity();
-  switchMap = true;
-  newMap++;
-}
-
-void resetMap() {
-  ocean.generate();
-  mt.generate();
-  climate = new Climate();
-  mainC = new City();
-  mainC.createCity(startBlock);
-  subC = new AbandonedCity();
-  switchMap = true;
-}
 
 void generateSeed() {
   randomSeed = int(random(1000000));

@@ -29,7 +29,7 @@ int municipalBudget = 50000;
 float economicRecessionRate = 0.1;
 float populationGrowthRate = 0.05;
 int commuteTolerances = 150;
-int populationDesity = 10;
+int populationDensity = 10;
 
 //------------------------------------------------------------------------------------------------------
 
@@ -45,7 +45,12 @@ void setup() {
   createGUI();
   startTempVars();
   generateSeed();
-
+  
+  syncGUI();
+  pixelDensity(1);
+  economicsSet.setVisible(false);
+  environmentSet.setVisible(false);
+  
   ocean = new Ocean();
   mt = new Mountain();
   climate = new Climate();
