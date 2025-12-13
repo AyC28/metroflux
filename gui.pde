@@ -70,9 +70,10 @@ public void setO(GButton source, GEvent event) { //_CODE_:presetO:755041:
 } //_CODE_:presetO:755041:
 
 public void resetSetting(GButton source, GEvent event) { //_CODE_:resetMap:404340:
-  startTempVars();
+  tempVar[0] = 0.1;
+  applySetting(tempVar);
   syncGUI();
-  resetMap();
+  resetMaps();
 } //_CODE_:resetMap:404340:
 
 synchronized public void draw_envrio(PApplet appc, GWinData data) { //_CODE_:environmentSet:589896:

@@ -1,3 +1,5 @@
+// creating ruins, and also rehabilitating them back to the main city
+
 class AbandonedCity extends City {
 
   float probR, roughR;
@@ -35,17 +37,17 @@ class AbandonedCity extends City {
       roughR = (float) blocks.size()/ (float) mainC.blocks.size();
     }
     else {
-      roughR = 100;
+      roughR = 100;  //when main city is dead
     }
 
     //Different situations when too much abandon blocks
     if (roughR > 2) { //when many abandon blocks, make rehabitations faster
       probR = 1;
-      attempts = blocks.size()/40;
+      attempts = max(1,blocks.size()/20);
     }
     else {                                         //when it is in normal situation, normal speed for rehabitation.
       probR = map(roughR, 0,2,0.05,1);
-      attempts = blocks.size()/100;
+      attempts = max(1,blocks.size()/100);
     }
 
     for (int k = 0; k < attempts; k++) {           //more attempts to rehabitat when there are more abandon blocks
@@ -54,7 +56,7 @@ class AbandonedCity extends City {
         int i = int(random(blocks.size()));
         PVector b = blocks.get(i);
 
-        if (!climate.isFlooding(b.x, b.y)) {
+        if (!climate.isFlooding(b.x, b.y)) {      //adding the blocks back to main city
           target.blocks.add(b);
           target.surviveTime.add(0);
           target.edgeBlocks.add(b);

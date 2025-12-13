@@ -1,3 +1,5 @@
+//rain particles and rising/falling flood level
+
 class Climate {
   int numDrops,maxDrop;
   float currentWaterLevel = 0.45;
@@ -70,14 +72,14 @@ class Climate {
     float targetLevel = 0.45;   //ocean height level
     
     if (rainLevel >= 3) {
-      // get the elevation of the lowest house
+      // get the elevation of the lowest house; only flood with rain level is over 3
       float lowestCityBlock = mainC.getLowestBuildingElevation();
       
       // aim a bit higher so it fully floods that house
       float floodAggression = 0.02; 
       float potentialTarget = lowestCityBlock + floodAggression;
       
-      // set maximum of how high each level of rain can hit.  Lv.3 stops at 0.49 (grey), Lv.4 goes up to 1.0 (Peaks)
+      // set maximum elevation each level of rain can hit. Lv.3 to 0.49, Lv.4 to 1
       float maxCap;
       
       if (rainLevel ==3) {
@@ -101,19 +103,17 @@ class Climate {
 
 
   boolean isFlooding(float x, float y) {
-    // If water is at sea level, no flooding
+    // If flood water is at sea level, no flooding
     if (currentWaterLevel <= 0.45) {
       return false;
     }
     
     float elev = getElevation(x, y);
     
-    // a block floods if: (land, >0.45) (lower than current flooding level)
+    // a block floods if: (land, >0.45) or (lower than current flooding level)
     if (elev >= 0.45 && elev < currentWaterLevel) {
       return true;
     }
-    
     return false;
   }
-  
 }

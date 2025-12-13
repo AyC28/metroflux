@@ -6,13 +6,14 @@ Mountain mt;
 Ocean ocean;
 Climate climate;
 
+// ----- Simulation Variables ----
 float blockSize = 4;
-long randomSeed;      //210856, 423355, 653087 (face), 823157 (bridge island)
+long randomSeed;      
 PVector startBlock;
 int newMap;
 boolean switchMap = false;
 
-//------------------------------------------------------------------------------------------------------
+//----------Presets / Sliders-----------------------------------------------------------------------------------
 //preset setting
 float rainFreq = 0.1;
 int rainLevel = 0; 
@@ -31,7 +32,7 @@ float populationGrowthRate = 0.05;
 int commuteTolerances = 150;
 int populationDensity = 10;
 
-//------------------------------------------------------------------------------------------------------
+//-----------Temperary storage----------------------------------------------------------------------------
 
 //store variables made in sliders, and these settings will appear when "generate map" is pressed
 float[] tempVar = new float[11]; 
@@ -42,15 +43,16 @@ void setup() {
   size(1200, 800);
   noStroke();
   
+  //initiate map, and settings
   createGUI();
   startTempVars();
   generateSeed();
   
   syncGUI();
-  pixelDensity(1);
   economicsSet.setVisible(false);
   environmentSet.setVisible(false);
   
+  //create elements
   ocean = new Ocean();
   mt = new Mountain();
   climate = new Climate();
@@ -69,7 +71,7 @@ void setup() {
 void draw() {
   background(34, 139, 34);
 
-  //Display ocean/mountain when enabled by the user
+  // 1. Display ocean/mountain when enabled by the user
   if (enableOcean) {
     ocean.display();
   }
@@ -77,36 +79,26 @@ void draw() {
     mt.display();  
   }
 
-  //calculate economic impact on the city's growth
+  //2. calculate economic impact on the city's growth
   calEcon();
 
-  //show main city
+  //3. show main city
   mainC.updateCity();
   mainC.display();
 
-  //show abandoned city
+  //4. show abandoned city
   subC.display();
   subC.rehabitat(mainC);
 
-  int rainChangeInt = int(map(rainFreq, 0,1, 75,45));
+  //5. weather frequency calculation with current rain state
+  int rainChangeInt = int(map(rainFreq, 0,1, 75,65));
   if (frameCount % rainChangeInt == 0) {
     rainLevel = getRainLevel(rainFreq);
   }
 
-  //show rain
+  //6. display rain
   climate.update();
   climate.display();
   
   switchMap = false;
-
-  //Debug: Delete After
-  fill(255);
-  text("Rain Level: " + rainLevel, 20,20);
-  text("City Size: " + mainC.blocks.size(), 20,40);
-  text("Abandon Size: " + subC.blocks.size(), 20,60);
-  text("getRainLevel: " + getRainLevel(rainFreq), 20,80);
-  text("Rain Frequency: " + rainFreq, 20,100);
-  text("Change Interval: " + rainChangeInt, 20,120);
-  text("Noise Seed: " + randomSeed, 20,140);
-  text("Map Count: " + newMap, 20,160);
 }

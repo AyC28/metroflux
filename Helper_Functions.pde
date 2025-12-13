@@ -1,3 +1,4 @@
+//when the middle point of the map is not available, find another spot that can start the city
 PVector findValidStart() {
   int attempts = 0;
   PVector p = new PVector(width/2, height/2);
@@ -5,7 +6,7 @@ PVector findValidStart() {
     p.x = width/2 + random(-300, 300);
     p.y = height/2 + random(-300, 300);
     attempts++;
-    if (attempts > 500) {
+    if (attempts > 500) {          //try with another map when this map is too difficult to generate a point
       println("try with new map");
       generateSeed();
       ocean.generate();
@@ -16,9 +17,10 @@ PVector findValidStart() {
   return p;
 }
 
-//------------------------------------------------------------------------------------------------------
+//---------------------City Blocks Generation----------------------------------------------------------------------
 
-boolean allowBlocks(float x, float y) {    //allow blocks to spawn if its not too high up mountain and not ocean
+//allow blocks to spawn if its not too high up mountain and not ocean
+boolean allowBlocks(float x, float y) {    
   
   float elev = getElevation(x,y);
   
@@ -30,10 +32,10 @@ boolean allowBlocks(float x, float y) {    //allow blocks to spawn if its not to
     return true;
   }
   
+  //lower probability of having a city block when facing a higher elevation
   if (enableMountain && 0.6 >= elev && elev > 0.45) {
     return true;
   }
-
   else if (enableMountain && 0.7 >= elev && elev > 0.6 && random(1) < 0.1) {
     return true;
   }
@@ -47,42 +49,40 @@ boolean allowBlocks(float x, float y) {    //allow blocks to spawn if its not to
   return false;
 }
 
-//------------------------------------------------------------------------------------------------------
+//----------------------Calculate Elevation--------------------------------------------------------------------
 
-float getElevation(float x, float y) {        //Perlin noise for generation ocean & mountain
+//Perlin noise for generation ocean & mountain
+float getElevation(float x, float y) {        
   float xOff = 5000; 
   float yOff = 5000;
 
-  // 1. Base Landscape (Continental shape)
+  // stack two noise to create a general shape of the land
   float n1 = noise((x + xOff) * 0.002, (y + yOff) * 0.002);
   float n2 = noise((x + xOff) * 0.01, (y + yOff) * 0.01) * 0.2;
   float baseHeight = n1 + n2;
 
-  // 2. Island Mask (Makes the edges lower than the center)
+  // higher elevation at the middle
   float d = dist(width/2, height/2, x, y);
   float normD = d / (width * 0.6);
   float islandMask = pow(normD, 3) * 0.6;
   
-  // If Ocean is disabled, we flatten the mask so it's an infinite plain
-  // But we keep a tiny bit of mask to create a "basin" for flood logic if needed
+  // flatten plane if no ocean
   if (!enableOcean) {
     islandMask = 0; 
   }
   
-  // 3. Apply Ocean Severity to base height
-  // Higher oceanSeverity = lower ground = more water
+  // use ocean severity to raise the sea
   float oceanMod = map(oceanSeverity, 0, 1, 0.25, -0.25); 
   
   float elevation = (baseHeight - islandMask) + oceanMod;
 
-  // 4. Mountain Details
+  // build mountians, depending on mtSeverity
   if (enableMountain) {
-    // Determine where mountains go (only on higher ground)
     float mtThreshold = map(mtSeverity, 0, 1, 0.7, 0.55);
     float mountainZone = constrain(map(elevation, 0.45, mtThreshold, 0, 1), 0, 1);
     float ruggedness = noise(x * 0.015, y * 0.015);
     
-    // Scale height by severity
+    // higher peak height with regards to mtSeverity
     float peakHeight = map(mtSeverity, 0, 1, 0.1, 0.6);
     
     elevation += ruggedness * mountainZone * peakHeight;
@@ -90,13 +90,14 @@ float getElevation(float x, float y) {        //Perlin noise for generation ocea
 
   return elevation;
 }
-//------------------------------------------------------------------------------------------------------
+//------------------Rain Level Generation---------------------------------------------------------------------
 
+//rain level with the rain intensity
 int getRainLevel(float rainFreq) {
   if (rainFreq < 0.05) {
     return 0;
   }
-  float luckyNum = random(1);
+  float luckyNum = random(1);      //set a random number, and rain will display according to its value.
   
   if (rainFreq * 0.2 > luckyNum) {
     return 4;
@@ -114,9 +115,10 @@ int getRainLevel(float rainFreq) {
   
 }
 
-//------------------------------------------------------------------------------------------------------
+//------------------Calculate Economics---------------------------------------------------------------------------
 
-float calEconGrow(float gdp, float recession, float budget, float popGrow) {
+
+float calEconGrow(float gdp, float recession, float budget, float popGrow) {    //growth rate of the city
   float baseStab = gdp / 50000.0; 
   float risk = pow(1.0 - recession,3);
   float richFactor = log(budget + 1) * 1.5;
@@ -125,7 +127,7 @@ float calEconGrow(float gdp, float recession, float budget, float popGrow) {
   return constrain(money, 0.1, 5);
 }
 
-int calUrbanSize (float commute, float econFactor, float density) {
+int calUrbanSize (float commute, float econFactor, float density) {            //growth limit of the city
   float maxArea = PI * pow(commute,2);
   float densityMod = map(density, 1, 50, 0.5, 1.5);
   float effectiveArea = maxArea * pow(econFactor,2) * densityMod;
@@ -133,7 +135,7 @@ int calUrbanSize (float commute, float econFactor, float density) {
   return int(effectiveArea/ pow (blockSize,2));
 }
 
-void calEcon() {
+void calEcon() {    //bring the values to growth limit and growth rate
   float econFactor = calEconGrow(gdpPerCapita, economicRecessionRate, municipalBudget, populationGrowthRate);
   int targetSize = calUrbanSize(commuteTolerances, econFactor, populationDensity);
   
@@ -143,7 +145,7 @@ void calEcon() {
 }
 
 
-//------------------------------------------------------------------------------------------------------
+//---------------------Map Seed Generation----------------------------------------------------------------------
 
 void generateSeed() {
   randomSeed = int(random(1000000));
