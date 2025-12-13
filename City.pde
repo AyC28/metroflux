@@ -5,14 +5,17 @@ class City {
   ArrayList<PVector> edgeBlocks;
   ArrayList<Integer> floodBlockTimer;
 
-  int softLim = 2000;      //Once there are 2000 city blocks, it will start to decrease its growth rate
+  int softLim;      //Once there are 2000 city blocks, it will start to decrease its growth rate
   int floodLim = 40;       //It takes 40 frames to flood one city block
-
+  float growthMultiplier = 1;
+  float econHealth = 1;
+  
   City() {
     blocks = new ArrayList<PVector>();
     surviveTime = new ArrayList<Integer>();
     edgeBlocks = new ArrayList<PVector>();
     floodBlockTimer = new ArrayList<Integer>();
+    softLim = 2000;
   }
 
   void createCity(PVector startB) {  //Initiate city, somewhere green
@@ -25,6 +28,13 @@ class City {
   void updateCity() {
     
     float decayProb = 0.0001;        //probability that this block will abandoned.
+    
+    if (econHealth > 1.2) {
+      decayProb /= 2.0; 
+    } else if (econHealth < 0.8) {
+      decayProb *= (2.0 + (1.0 - econHealth)); // Gets worse as economy drops
+    }
+    
     
     if (blocks.size() > softLim) {
       float overB = blocks.size() - softLim;  //Increase the chance of abandonment when over the soft limit
@@ -62,12 +72,17 @@ class City {
       }
     }
     
+    
+    
     if (frameCount % 7 == 0 && blocks.size() > subC.blocks.size()) {
       if (rainLevel >= 3) {                //Will not grow if over rain level 3
         return;
       }
       
-      for (int i = 0; i < 200; i++) {      //200 edge blocks will be given a chance to expand
+      int buildSpeed = int(200*growthMultiplier);
+      buildSpeed = constrain(buildSpeed,0,800);
+      
+      for (int i = 0; i < buildSpeed; i++) {      //200 edge blocks will be given a chance to expand
         grow();
       }
     }

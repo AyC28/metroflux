@@ -14,89 +14,144 @@
  * =========================================================
  */
 
-public void openE(GButton source, GEvent event) { //_CODE_:openEnvironemnt:411614:
-  println("openEnvironemnt - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:openEnvironemnt:411614:
+public void setMap(GButton source, GEvent event) { //_CODE_:genMap:451647:
+  applySetting(tempVar);
+  generateSeed();
+  setnewMap();
+  
+  println("button1 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:genMap:451647:
 
-public void openEcon(GButton source, GEvent event) { //_CODE_:openEconomics:233632:
-  println("openEconomics - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:openEconomics:233632:
+public void oEcon(GButton source, GEvent event) { //_CODE_:openEcon:987711:
+  economicsSet.setVisible(true);
 
-public void genMap(GButton source, GEvent event) { //_CODE_:mapGeneration:297302:
-  println("mapGeneration - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:mapGeneration:297302:
+  println("button2 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:openEcon:987711:
 
-public void set1(GButton source, GEvent event) { //_CODE_:preset1:824341:
-  println("preset1 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:preset1:824341:
+public void oEnv(GButton source, GEvent event) { //_CODE_:openEnv:591581:
+  environmentSet.setVisible(true);
+  
+  println("button3 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:openEnv:591581:
 
-public void set2(GButton source, GEvent event) { //_CODE_:preset2:809455:
-  println("preset2 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:preset2:809455:
+public void setJ(GButton source, GEvent event) { //_CODE_:presetJ:376584:
+  println("button4 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:presetJ:376584:
 
-public void set3(GButton source, GEvent event) { //_CODE_:preset3:460313:
-  println("preset3 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:preset3:460313:
+public void setM(GButton source, GEvent event) { //_CODE_:presetM:203186:
+  println("button5 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:presetM:203186:
 
-synchronized public void envSet(PApplet appc, GWinData data) { //_CODE_:EnvironmentSettings:399990:
-  appc.background(230);
-} //_CODE_:EnvironmentSettings:399990:
+public void setO(GButton source, GEvent event) { //_CODE_:presetO:755041:
+  println("button6 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:presetO:755041:
 
-public void sliderOcean(GCustomSlider source, GEvent event) { //_CODE_:oceanIntensity:257706:
-  println("oceanIntensity - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:oceanIntensity:257706:
+public void resetSetting(GButton source, GEvent event) { //_CODE_:resetMap:404340:
+  startTempVars();
+  resetMap();
+  
+  println("resetMap - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:resetMap:404340:
 
-public void sliderMountain(GCustomSlider source, GEvent event) { //_CODE_:mountainIntensity:581695:
-  println("mountainIntensity - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:mountainIntensity:581695:
+synchronized public void draw_envrio(PApplet appc, GWinData data) { //_CODE_:environmentSet:589896:
+ 
+  appc.background(175, 225, 175);
+} //_CODE_:environmentSet:589896:
 
-public void sliderClimate(GCustomSlider source, GEvent event) { //_CODE_:climateFrequency:722911:
-  println("climateFrequency - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:climateFrequency:722911:
+public void toggleOcean(GCheckbox source, GEvent event) { //_CODE_:oceanCheck:417087:
+  boolean setState = oceanCheck.isSelected();
+  if (setState == false) {
+    tempVar[1] = 0;
+  }
+  else {
+    tempVar[1] = 1;
+  }
+  
+  println("oceanCheck - GCheckbox >> GEvent." + event + " @ " + millis());
+} //_CODE_:oceanCheck:417087:
 
-public void toggleOcean(GCheckbox source, GEvent event) { //_CODE_:allowOcean:825702:
-  println("allowOcean - GCheckbox >> GEvent." + event + " @ " + millis());
-} //_CODE_:allowOcean:825702:
+public void toggleMountain(GCheckbox source, GEvent event) { //_CODE_:mountainCheck:680878:
+  boolean setState = mountainCheck.isSelected();
+  if (setState == false) {
+    tempVar[3] = 0;
+  }
+  else {
+    tempVar[3] = 1;
+  }
+  
+  println("mountainCheck - GCheckbox >> GEvent." + event + " @ " + millis());
+} //_CODE_:mountainCheck:680878:
 
-public void toggleMountain(GCheckbox source, GEvent event) { //_CODE_:allowMountain:281316:
-  println("allowMountain - GCheckbox >> GEvent." + event + " @ " + millis());
-} //_CODE_:allowMountain:281316:
+public void sliderOcean(GCustomSlider source, GEvent event) { //_CODE_:setOcean:783830:
+  tempVar[2] = setOcean.getValueF();
+  
+  println("setOcean - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setOcean:783830:
 
-public void closeE(GButton source, GEvent event) { //_CODE_:closeEnvGUI:834480:
-  println("closeEnvGUI - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:closeEnvGUI:834480:
+public void sliderMountain(GCustomSlider source, GEvent event) { //_CODE_:setMountain:234560:
+  tempVar[4] = setMountain.getValueF();
+  
+  println("setMountain - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setMountain:234560:
 
-synchronized public void win_draw1(PApplet appc, GWinData data) { //_CODE_:EconomicSettings:251741:
-  appc.background(230);
-} //_CODE_:EconomicSettings:251741:
+public void sliderRain(GCustomSlider source, GEvent event) { //_CODE_:setRain:860061:
+  tempVar[0] = setRain.getValueF();
+  
+  println("setRain - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setRain:860061:
 
-public void custom_slider1_change1(GCustomSlider source, GEvent event) { //_CODE_:gdp:462858:
-  println("custom_slider1 - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:gdp:462858:
+public void cEn(GButton source, GEvent event) { //_CODE_:closeEnviro:633859:
+  environmentSet.setVisible(false);
+  
+  println("closeEnviro - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:closeEnviro:633859:
 
-public void custom_slider2_change1(GCustomSlider source, GEvent event) { //_CODE_:municipialBudget:410812:
-  println("custom_slider2 - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:municipialBudget:410812:
+synchronized public void draw_econ(PApplet appc, GWinData data) { //_CODE_:economicsSet:983638:
+  
+  
+  appc.background(152, 216, 219);
+} //_CODE_:economicsSet:983638:
 
-public void custom_slider3_change1(GCustomSlider source, GEvent event) { //_CODE_:recession:492170:
-  println("custom_slider3 - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:recession:492170:
+public void sliderGDP(GCustomSlider source, GEvent event) { //_CODE_:setGDP:722549:
+  tempVar[5] = float(setGDP.getValueI());
+  
+  println("setGDP - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setGDP:722549:
 
-public void custom_slider4_change1(GCustomSlider source, GEvent event) { //_CODE_:populationGrowth:746917:
-  println("custom_slider4 - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:populationGrowth:746917:
+public void sliderMuni(GCustomSlider source, GEvent event) { //_CODE_:setMuni:650462:
+  tempVar[6] = float(setMuni.getValueI());
+  
+  println("setMuni - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setMuni:650462:
 
-public void custom_slider5_change1(GCustomSlider source, GEvent event) { //_CODE_:commuteTolerance:431981:
-  println("custom_slider5 - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:commuteTolerance:431981:
+public void sliderComm(GCustomSlider source, GEvent event) { //_CODE_:setComm:829493:
+  tempVar[9] = float(setComm.getValueI());
+  
+  println("setComm - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setComm:829493:
 
-public void toggleDensity(GCustomSlider source, GEvent event) { //_CODE_:populationDensity:298534:
-  println("custom_slider6 - GCustomSlider >> GEvent." + event + " @ " + millis());
-} //_CODE_:populationDensity:298534:
+public void sliderPopG(GCustomSlider source, GEvent event) { //_CODE_:setPopG:362966:
+  tempVar[8] = setPopG.getValueF();
+  
+  println("setPopG - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setPopG:362966:
 
-public void closeEcon(GButton source, GEvent event) { //_CODE_:clsoeEconGUI:881997:
-  println("clsoeEconGUI - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:clsoeEconGUI:881997:
+public void sliderPopDen(GCustomSlider source, GEvent event) { //_CODE_:setPopDen:748355:
+  tempVar[10] = setPopDen.getValueF();
+  
+  println("setPopDen - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setPopDen:748355:
+
+public void sliderEconR(GCustomSlider source, GEvent event) { //_CODE_:setEconR:757411:
+  tempVar[7] = setEconR.getValueF();
+  
+  println("setEconR - GCustomSlider >> GEvent." + event + " @ " + millis());
+} //_CODE_:setEconR:757411:
+
+public void cEcon(GButton source, GEvent event) { //_CODE_:closeEconomics:835496:
+  economicsSet.setVisible(false);
+  println("closeEconomics - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:closeEconomics:835496:
 
 
 
@@ -107,180 +162,225 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setMouseOverEnabled(false);
   surface.setTitle("Sketch Window");
-  openEnvironemnt = new GButton(this, 6, 333, 115, 45);
-  openEnvironemnt.setText("Environment Settings");
-  openEnvironemnt.addEventHandler(this, "openE");
-  openEconomics = new GButton(this, 6, 418, 115, 45);
-  openEconomics.setText("Economics    Settings");
-  openEconomics.addEventHandler(this, "openEcon");
-  mapGeneration = new GButton(this, 541, 11, 116, 55);
-  mapGeneration.setText("Generate Map");
-  mapGeneration.setLocalColorScheme(GCScheme.RED_SCHEME);
-  mapGeneration.addEventHandler(this, "genMap");
-  preset1 = new GButton(this, 1099, 341, 80, 30);
-  preset1.setText("Preset 1");
-  preset1.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
-  preset1.addEventHandler(this, "set1");
-  preset2 = new GButton(this, 1099, 385, 80, 30);
-  preset2.setText("Preset 2");
-  preset2.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
-  preset2.addEventHandler(this, "set2");
-  preset3 = new GButton(this, 1098, 430, 80, 30);
-  preset3.setText("Preset 3");
-  preset3.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
-  preset3.addEventHandler(this, "set3");
-  EnvironmentSettings = GWindow.getWindow(this, "Environment", 0, 0, 350, 300, JAVA2D);
-  EnvironmentSettings.noLoop();
-  EnvironmentSettings.setActionOnClose(G4P.KEEP_OPEN);
-  EnvironmentSettings.addDrawHandler(this, "envSet");
-  oceanIntensity = new GCustomSlider(EnvironmentSettings, 49, 81, 100, 67, "grey_blue");
-  oceanIntensity.setShowValue(true);
-  oceanIntensity.setShowLimits(true);
-  oceanIntensity.setLimits(0.5, 0.0, 1.0);
-  oceanIntensity.setNbrTicks(5);
-  oceanIntensity.setShowTicks(true);
-  oceanIntensity.setNumberFormat(G4P.DECIMAL, 2);
-  oceanIntensity.setOpaque(false);
-  oceanIntensity.addEventHandler(this, "sliderOcean");
-  mountainIntensity = new GCustomSlider(EnvironmentSettings, 209, 81, 100, 67, "grey_blue");
-  mountainIntensity.setShowValue(true);
-  mountainIntensity.setShowLimits(true);
-  mountainIntensity.setLimits(5.0, 0.0, 10.0);
-  mountainIntensity.setNbrTicks(5);
-  mountainIntensity.setShowTicks(true);
-  mountainIntensity.setNumberFormat(G4P.DECIMAL, 2);
-  mountainIntensity.setLocalColorScheme(GCScheme.GREEN_SCHEME);
-  mountainIntensity.setOpaque(false);
-  mountainIntensity.addEventHandler(this, "sliderMountain");
-  climateFrequency = new GCustomSlider(EnvironmentSettings, 131, 198, 100, 61, "grey_blue");
-  climateFrequency.setShowValue(true);
-  climateFrequency.setShowLimits(true);
-  climateFrequency.setLimits(0.1, 0.0, 1.0);
-  climateFrequency.setNbrTicks(5);
-  climateFrequency.setShowTicks(true);
-  climateFrequency.setNumberFormat(G4P.DECIMAL, 2);
-  climateFrequency.setOpaque(false);
-  climateFrequency.addEventHandler(this, "sliderClimate");
-  allowOcean = new GCheckbox(EnvironmentSettings, 38, 30, 120, 20);
-  allowOcean.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
-  allowOcean.setText("Allow Ocean");
-  allowOcean.setOpaque(false);
-  allowOcean.addEventHandler(this, "toggleOcean");
-  allowOcean.setSelected(true);
-  allowMountain = new GCheckbox(EnvironmentSettings, 204, 32, 120, 20);
-  allowMountain.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
-  allowMountain.setText("Allow Mountain");
-  allowMountain.setLocalColorScheme(GCScheme.GREEN_SCHEME);
-  allowMountain.setOpaque(false);
-  allowMountain.addEventHandler(this, "toggleMountain");
-  allowMountain.setSelected(true);
-  closeEnvGUI = new GButton(EnvironmentSettings, 261, 258, 80, 30);
-  closeEnvGUI.setText("Close");
-  closeEnvGUI.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
-  closeEnvGUI.addEventHandler(this, "closeE");
-  label7 = new GLabel(EnvironmentSettings, 49, 61, 100, 20);
-  label7.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label7.setText("Ocean Intensity");
-  label7.setOpaque(false);
-  label8 = new GLabel(EnvironmentSettings, 209, 53, 101, 27);
-  label8.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label8.setText("Mountain Intensity");
-  label8.setOpaque(false);
-  label9 = new GLabel(EnvironmentSettings, 130, 176, 101, 20);
-  label9.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label9.setText("Rain Intensity");
-  label9.setOpaque(false);
-  EconomicSettings = GWindow.getWindow(this, "Economics", 0, 0, 350, 300, JAVA2D);
-  EconomicSettings.noLoop();
-  EconomicSettings.setActionOnClose(G4P.KEEP_OPEN);
-  EconomicSettings.addDrawHandler(this, "win_draw1");
-  gdp = new GCustomSlider(EconomicSettings, 50, 39, 100, 51, "grey_blue");
-  gdp.setLimits(0.5, 0.0, 1.0);
-  gdp.setNumberFormat(G4P.DECIMAL, 2);
-  gdp.setOpaque(false);
-  gdp.addEventHandler(this, "custom_slider1_change1");
-  municipialBudget = new GCustomSlider(EconomicSettings, 198, 38, 100, 52, "grey_blue");
-  municipialBudget.setLimits(0.5, 0.0, 1.0);
-  municipialBudget.setNumberFormat(G4P.DECIMAL, 2);
-  municipialBudget.setOpaque(false);
-  municipialBudget.addEventHandler(this, "custom_slider2_change1");
-  recession = new GCustomSlider(EconomicSettings, 51, 121, 100, 49, "grey_blue");
-  recession.setLimits(0.5, 0.0, 1.0);
-  recession.setNumberFormat(G4P.DECIMAL, 2);
-  recession.setOpaque(false);
-  recession.addEventHandler(this, "custom_slider3_change1");
-  populationGrowth = new GCustomSlider(EconomicSettings, 199, 120, 100, 49, "grey_blue");
-  populationGrowth.setLimits(0.5, 0.0, 1.0);
-  populationGrowth.setNumberFormat(G4P.DECIMAL, 2);
-  populationGrowth.setOpaque(false);
-  populationGrowth.addEventHandler(this, "custom_slider4_change1");
-  commuteTolerance = new GCustomSlider(EconomicSettings, 50, 201, 100, 48, "grey_blue");
-  commuteTolerance.setLimits(0.5, 0.0, 1.0);
-  commuteTolerance.setNumberFormat(G4P.DECIMAL, 2);
-  commuteTolerance.setOpaque(false);
-  commuteTolerance.addEventHandler(this, "custom_slider5_change1");
-  populationDensity = new GCustomSlider(EconomicSettings, 199, 200, 100, 49, "grey_blue");
-  populationDensity.setLimits(0.5, 0.0, 1.0);
-  populationDensity.setNumberFormat(G4P.DECIMAL, 2);
-  populationDensity.setOpaque(false);
-  populationDensity.addEventHandler(this, "toggleDensity");
-  clsoeEconGUI = new GButton(EconomicSettings, 259, 258, 80, 30);
-  clsoeEconGUI.setText("Close");
-  clsoeEconGUI.addEventHandler(this, "closeEcon");
-  label1 = new GLabel(EconomicSettings, 50, 172, 100, 28);
+  genMap = new GButton(this, 560, 19, 80, 30);
+  genMap.setText("Generate Map");
+  genMap.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  genMap.addEventHandler(this, "setMap");
+  openEcon = new GButton(this, 15, 420, 80, 35);
+  openEcon.setText("Economics Setting");
+  openEcon.setLocalColorScheme(GCScheme.RED_SCHEME);
+  openEcon.addEventHandler(this, "oEcon");
+  openEnv = new GButton(this, 15, 350, 80, 35);
+  openEnv.setText("Envrionment Setting");
+  openEnv.setLocalColorScheme(GCScheme.RED_SCHEME);
+  openEnv.addEventHandler(this, "oEnv");
+  presetJ = new GButton(this, 1105, 385, 80, 30);
+  presetJ.setText("Island");
+  presetJ.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  presetJ.addEventHandler(this, "setJ");
+  presetM = new GButton(this, 1105, 315, 80, 30);
+  presetM.setText("Mountain Rage");
+  presetM.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  presetM.addEventHandler(this, "setM");
+  presetO = new GButton(this, 1104, 455, 80, 30);
+  presetO.setText("Ocean Rage");
+  presetO.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  presetO.addEventHandler(this, "setO");
+  resetMap = new GButton(this, 560, 66, 80, 30);
+  resetMap.setText("Reset");
+  resetMap.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
+  resetMap.addEventHandler(this, "resetSetting");
+  environmentSet = GWindow.getWindow(this, "Envrionment", 0, 0, 400, 300, JAVA2D);
+  environmentSet.noLoop();
+  environmentSet.setActionOnClose(G4P.KEEP_OPEN);
+  environmentSet.addDrawHandler(this, "draw_envrio");
+  oceanCheck = new GCheckbox(environmentSet, 35, 29, 130, 20);
+  oceanCheck.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
+  oceanCheck.setText("Allow Ocean");
+  oceanCheck.setOpaque(false);
+  oceanCheck.addEventHandler(this, "toggleOcean");
+  oceanCheck.setSelected(true);
+  mountainCheck = new GCheckbox(environmentSet, 235, 27, 130, 20);
+  mountainCheck.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
+  mountainCheck.setText("Allow Mountain");
+  mountainCheck.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  mountainCheck.setOpaque(false);
+  mountainCheck.addEventHandler(this, "toggleMountain");
+  mountainCheck.setSelected(true);
+  setOcean = new GCustomSlider(environmentSet, 35, 81, 130, 55, "grey_blue");
+  setOcean.setShowValue(true);
+  setOcean.setShowLimits(true);
+  setOcean.setLimits(0.5, 0.0, 1.0);
+  setOcean.setNbrTicks(5);
+  setOcean.setShowTicks(true);
+  setOcean.setNumberFormat(G4P.DECIMAL, 2);
+  setOcean.setOpaque(false);
+  setOcean.addEventHandler(this, "sliderOcean");
+  setMountain = new GCustomSlider(environmentSet, 235, 82, 130, 54, "grey_blue");
+  setMountain.setShowValue(true);
+  setMountain.setShowLimits(true);
+  setMountain.setLimits(0.5, 0.0, 1.0);
+  setMountain.setNbrTicks(5);
+  setMountain.setShowTicks(true);
+  setMountain.setNumberFormat(G4P.DECIMAL, 2);
+  setMountain.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  setMountain.setOpaque(false);
+  setMountain.addEventHandler(this, "sliderMountain");
+  setRain = new GCustomSlider(environmentSet, 135, 205, 130, 55, "grey_blue");
+  setRain.setShowValue(true);
+  setRain.setShowLimits(true);
+  setRain.setLimits(0.1, 0.0, 1.0);
+  setRain.setNbrTicks(5);
+  setRain.setShowTicks(true);
+  setRain.setNumberFormat(G4P.DECIMAL, 2);
+  setRain.setOpaque(false);
+  setRain.addEventHandler(this, "sliderRain");
+  enviro1 = new GLabel(environmentSet, 35, 54, 130, 20);
+  enviro1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  enviro1.setText("Ocean Intensity");
+  enviro1.setOpaque(false);
+  enviro2 = new GLabel(environmentSet, 235, 54, 131, 20);
+  enviro2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  enviro2.setText("Mountain Intensity");
+  enviro2.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  enviro2.setOpaque(false);
+  enviro3 = new GLabel(environmentSet, 135, 177, 130, 20);
+  enviro3.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  enviro3.setText("Rain Intensity");
+  enviro3.setOpaque(false);
+  closeEnviro = new GButton(environmentSet, 312, 261, 80, 30);
+  closeEnviro.setText("Close");
+  closeEnviro.setLocalColorScheme(GCScheme.RED_SCHEME);
+  closeEnviro.addEventHandler(this, "cEn");
+  economicsSet = GWindow.getWindow(this, "Economics", 0, 0, 400, 400, JAVA2D);
+  economicsSet.noLoop();
+  economicsSet.setActionOnClose(G4P.KEEP_OPEN);
+  economicsSet.addDrawHandler(this, "draw_econ");
+  setGDP = new GCustomSlider(economicsSet, 47, 72, 130, 55, "grey_blue");
+  setGDP.setShowValue(true);
+  setGDP.setShowLimits(true);
+  setGDP.setLimits(50000, 0, 100000);
+  setGDP.setNbrTicks(5);
+  setGDP.setShowTicks(true);
+  setGDP.setNumberFormat(G4P.INTEGER, 0);
+  setGDP.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  setGDP.setOpaque(false);
+  setGDP.addEventHandler(this, "sliderGDP");
+  setMuni = new GCustomSlider(economicsSet, 223, 72, 130, 55, "grey_blue");
+  setMuni.setShowValue(true);
+  setMuni.setShowLimits(true);
+  setMuni.setLimits(50000, 1000, 1000000);
+  setMuni.setNbrTicks(5);
+  setMuni.setShowTicks(true);
+  setMuni.setNumberFormat(G4P.INTEGER, 0);
+  setMuni.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  setMuni.setOpaque(false);
+  setMuni.addEventHandler(this, "sliderMuni");
+  setComm = new GCustomSlider(economicsSet, 47, 272, 130, 55, "grey_blue");
+  setComm.setShowValue(true);
+  setComm.setShowLimits(true);
+  setComm.setLimits(150, 50, 400);
+  setComm.setNbrTicks(5);
+  setComm.setShowTicks(true);
+  setComm.setNumberFormat(G4P.INTEGER, 0);
+  setComm.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  setComm.setOpaque(false);
+  setComm.addEventHandler(this, "sliderComm");
+  setPopG = new GCustomSlider(economicsSet, 223, 172, 130, 55, "grey_blue");
+  setPopG.setShowValue(true);
+  setPopG.setShowLimits(true);
+  setPopG.setLimits(0.05, 0.0, 0.2);
+  setPopG.setNbrTicks(5);
+  setPopG.setShowTicks(true);
+  setPopG.setNumberFormat(G4P.DECIMAL, 2);
+  setPopG.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  setPopG.setOpaque(false);
+  setPopG.addEventHandler(this, "sliderPopG");
+  setPopDen = new GCustomSlider(economicsSet, 223, 272, 130, 55, "grey_blue");
+  setPopDen.setShowValue(true);
+  setPopDen.setShowLimits(true);
+  setPopDen.setLimits(10, 1, 50);
+  setPopDen.setNbrTicks(5);
+  setPopDen.setShowTicks(true);
+  setPopDen.setNumberFormat(G4P.INTEGER, 0);
+  setPopDen.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  setPopDen.setOpaque(false);
+  setPopDen.addEventHandler(this, "sliderPopDen");
+  setEconR = new GCustomSlider(economicsSet, 47, 173, 130, 55, "grey_blue");
+  setEconR.setShowValue(true);
+  setEconR.setShowLimits(true);
+  setEconR.setLimits(0.1, 0.0, 1.0);
+  setEconR.setNbrTicks(5);
+  setEconR.setShowTicks(true);
+  setEconR.setNumberFormat(G4P.DECIMAL, 2);
+  setEconR.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  setEconR.setOpaque(false);
+  setEconR.addEventHandler(this, "sliderEconR");
+  closeEconomics = new GButton(economicsSet, 310, 360, 80, 30);
+  closeEconomics.setText("Close");
+  closeEconomics.setLocalColorScheme(GCScheme.RED_SCHEME);
+  closeEconomics.addEventHandler(this, "cEcon");
+  label1 = new GLabel(economicsSet, 47, 43, 130, 20);
   label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label1.setText("Commute Tolerance");
+  label1.setText("GDP Per Capita");
+  label1.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   label1.setOpaque(false);
-  label2 = new GLabel(EconomicSettings, 197, 90, 99, 30);
+  label2 = new GLabel(economicsSet, 223, 44, 130, 20);
   label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label2.setText("Population Growth Rate");
+  label2.setText("Municipal Budget");
+  label2.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   label2.setOpaque(false);
-  label3 = new GLabel(EconomicSettings, 199, 170, 102, 29);
+  label3 = new GLabel(economicsSet, 47, 137, 130, 27);
   label3.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label3.setText("Populaiton Density");
+  label3.setText("Economic Recession Rate");
+  label3.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   label3.setOpaque(false);
-  label4 = new GLabel(EconomicSettings, 51, 91, 100, 28);
+  label4 = new GLabel(economicsSet, 223, 136, 130, 28);
   label4.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label4.setText("Economic Recession Rate");
+  label4.setText("Population Growth Rate");
+  label4.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   label4.setOpaque(false);
-  label5 = new GLabel(EconomicSettings, 50, 19, 99, 20);
+  label5 = new GLabel(economicsSet, 47, 240, 130, 20);
   label5.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label5.setText("GDP Per Capita");
+  label5.setText("Commute Tolerance");
+  label5.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   label5.setOpaque(false);
-  label6 = new GLabel(EconomicSettings, 198, 18, 101, 20);
+  label6 = new GLabel(economicsSet, 223, 239, 130, 20);
   label6.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label6.setText("Municipal Budget");
+  label6.setText("Population Density");
+  label6.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   label6.setOpaque(false);
-  EnvironmentSettings.loop();
-  EconomicSettings.loop();
+  environmentSet.loop();
+  economicsSet.loop();
 }
 
 // Variable declarations 
 // autogenerated do not edit
-GButton openEnvironemnt; 
-GButton openEconomics; 
-GButton mapGeneration; 
-GButton preset1; 
-GButton preset2; 
-GButton preset3;
-GWindow EnvironmentSettings;
-GCustomSlider oceanIntensity; 
-GCustomSlider mountainIntensity; 
-GCustomSlider climateFrequency; 
-GCheckbox allowOcean; 
-GCheckbox allowMountain; 
-GButton closeEnvGUI; 
-GLabel label7; 
-GLabel label8; 
-GLabel label9; 
-GWindow EconomicSettings;
-GCustomSlider gdp; 
-GCustomSlider municipialBudget; 
-GCustomSlider recession; 
-GCustomSlider populationGrowth; 
-GCustomSlider commuteTolerance; 
-GCustomSlider populationDensity; 
-GButton clsoeEconGUI; 
+GButton genMap; 
+GButton openEcon; 
+GButton openEnv; 
+GButton presetJ; 
+GButton presetM; 
+GButton presetO; 
+GButton resetMap; 
+GWindow environmentSet;
+GCheckbox oceanCheck; 
+GCheckbox mountainCheck; 
+GCustomSlider setOcean; 
+GCustomSlider setMountain; 
+GCustomSlider setRain; 
+GLabel enviro1; 
+GLabel enviro2; 
+GLabel enviro3; 
+GButton closeEnviro; 
+GWindow economicsSet;
+GCustomSlider setGDP; 
+GCustomSlider setMuni; 
+GCustomSlider setComm; 
+GCustomSlider setPopG; 
+GCustomSlider setPopDen; 
+GCustomSlider setEconR; 
+GButton closeEconomics; 
 GLabel label1; 
 GLabel label2; 
 GLabel label3; 

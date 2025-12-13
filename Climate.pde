@@ -20,8 +20,13 @@ class Climate {
   }
   
   void update() {
+    if (switchMap) {
+      rainLevel = 0;
+      return;
+    }
     
-    floodingAlgo();    //Flooding Algo
+    
+    floodingAlgo();    //Flooding Algorithm
     
     if (rainLevel == 0) {    //does not show raindrops when no rain
       numDrops = 0;
