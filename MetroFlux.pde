@@ -101,4 +101,23 @@ void draw() {
   climate.display();
   
   switchMap = false;
+  
+  textSize(20);
+  fill(255);
+  text("Current Map:", 20,30);
+  textSize(17);
+  fill(242, 199, 194);
+  text("Ocean Intensity: " + nf(oceanSeverity,0,2), 25,60);
+  text("Mountain Intensity: " + nf(mtSeverity,0,2), 25,80);
+  text("Rain Intensity: " + nf(rainFreq,0,2), 25,100);
+  fill(209, 237, 216);
+  text("GDP Per Capita: " + gdpPerCapita, 25, 120);
+  text("Municipal Budget: " + municipalBudget, 25,140);
+  text("Rate of Economic Recession: " + nf(economicRecessionRate,0,2), 25, 160);
+  text("Population Growth Rate: " + nf(populationGrowthRate,0,2),25,180);
+  text("Commute Tolerance: " + nf(commuteTolerances,0,2), 25,200);
+  text("Population Density: " + populationDensity, 25, 220);
+  text("Current Rain Level: " + rainLevel, 25, 250);
+  
+  
 }
