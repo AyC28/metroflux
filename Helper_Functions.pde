@@ -118,25 +118,30 @@ int getRainLevel(float rainFreq) {
 //------------------Calculate Economics---------------------------------------------------------------------------
 
 
-float calEconGrow(float gdp, float recession, float budget, float popGrow) {    //growth rate of the city
+float calEconGrow(float gdp, float recession, float budget, float popGrow, float density) {    //growth rate of the city
+  if (budget == 0 || popGrow == 0) {
+    return 0;
+  }
+  
   float baseStab = gdp / 50000.0; 
   float risk = pow(1.0 - recession,3);
   float richFactor = log(budget + 1) * 1.5;
+  float densityMod = map(density,1,50, 1.5, 0.05);
   
-  float money = (baseStab * risk * richFactor) + (popGrow * 5);
+  float money = (baseStab * risk * richFactor * densityMod) + (popGrow * 5);
   return constrain(money, 0.1, 5);
 }
 
 int calUrbanSize (float commute, float econFactor, float density) {            //growth limit of the city
   float maxArea = PI * pow(commute,2);
-  float densityMod = map(density, 1, 50, 0.5, 1.5);
+  float densityMod = map(density, 1, 50, 1, 0.3);
   float effectiveArea = maxArea * pow(econFactor,2) * densityMod;
   
   return int(effectiveArea/ pow (blockSize,2));
 }
 
 void calEcon() {    //bring the values to growth limit and growth rate
-  float econFactor = calEconGrow(gdpPerCapita, economicRecessionRate, municipalBudget, populationGrowthRate);
+  float econFactor = calEconGrow(gdpPerCapita, economicRecessionRate, municipalBudget, populationGrowthRate, populationDensity);
   int targetSize = calUrbanSize(commuteTolerances, econFactor, populationDensity);
   
   mainC.growthMultiplier = econFactor;
