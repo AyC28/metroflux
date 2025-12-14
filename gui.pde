@@ -166,7 +166,7 @@ public void createGUI(){
   openEcon.setLocalColorScheme(GCScheme.RED_SCHEME);
   openEcon.addEventHandler(this, "oEcon");
   openEnv = new GButton(this, 15, 350, 80, 35);
-  openEnv.setText("Envrionment Setting");
+  openEnv.setText("Environment Setting");
   openEnv.setLocalColorScheme(GCScheme.RED_SCHEME);
   openEnv.addEventHandler(this, "oEnv");
   presetJ = new GButton(this, 1105, 385, 80, 30);
@@ -174,11 +174,11 @@ public void createGUI(){
   presetJ.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   presetJ.addEventHandler(this, "setJ");
   presetM = new GButton(this, 1105, 315, 80, 30);
-  presetM.setText("Mountain Rage");
+  presetM.setText("Mountain");
   presetM.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   presetM.addEventHandler(this, "setM");
   presetO = new GButton(this, 1104, 455, 80, 30);
-  presetO.setText("Ocean Rage");
+  presetO.setText("Ocean");
   presetO.setLocalColorScheme(GCScheme.CYAN_SCHEME);
   presetO.addEventHandler(this, "setO");
   resetMap = new GButton(this, 560, 66, 80, 30);

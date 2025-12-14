@@ -13,7 +13,7 @@ PVector startBlock;
 int newMap;
 boolean switchMap = false;
 
-//----------Presets / Sliders-----------------------------------------------------------------------------------
+//----------Presets / Sliders-----------------------------------------------------------------------------
 //preset setting
 float rainFreq = 0.1;
 int rainLevel = 0; 

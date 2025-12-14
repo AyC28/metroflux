@@ -1,5 +1,5 @@
-
 //After pressing generate map, we create new map with the new altered topography settings
+
 void applySetting(float[] TempVar) {  
   rainFreq = tempVar[0];
   if (tempVar[1] == 0) {      // 0 = no ocean, 1 = yes ocean
